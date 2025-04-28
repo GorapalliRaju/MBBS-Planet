@@ -1,74 +1,102 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React from 'react';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  useWindowDimensions,
+  StyleSheet,
+  SafeAreaView,
+  Platform,
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+} from 'react-native';
+import { WebView } from 'react-native-webview';
+import { images } from '@/constants/images';
+import { icons } from '@/constants/icons';
+import { BannerCarousel } from '@/components/BannerCarousel'
+import ServicesSection from '../../components/services';
+import { useNavigation } from 'expo-router';
+import { useLayoutEffect } from 'react';
 
-export default function HomeScreen() {
+const HomeScreen = () => {
+  const { width } = useWindowDimensions();
+  const horizontalPadding = 16;
+  const contentWidth = width - horizontalPadding * 2;
+  const bannerHeight = (184 / 328) * contentWidth;
+  const navigation = useNavigation();
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerTitle: () => (
+        <Text style={styles.logoText}>THE MBBS PLANET</Text>
+      ),
+      headerRight: () => (
+        <TouchableOpacity onPress={() => alert('Go to notifications')}>
+          <Image source={icons.notification} style={styles.notificationIcon} />
+        </TouchableOpacity>
+      ),
+      headerTitleAlign: 'left',
+      headerStyle: {
+        backgroundColor: '#fff',
+      },
+    });
+  }, [navigation]);
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView
+        contentContainerStyle={[styles.scrollContent, { paddingHorizontal: horizontalPadding }]}
+        showsVerticalScrollIndicator={false}
+      >
+
+        <BannerCarousel width={contentWidth} height={bannerHeight} />
+
+        {/* Services Section */}
+        <ServicesSection />
+      </ScrollView>
+    </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  titleContainer: {
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#F5F5F5',
+    paddingTop: Platform.OS === 'android' ? 20 : 0,
+  },
+  scrollContent: {
+    paddingBottom: 72,
+  },
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'space-between',
+    marginBottom: 16,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  logoText: {
+    fontSize: 20,
+    fontWeight: '600',
+    letterSpacing: 0.4,
+    lineHeight: 20,
+    fontFamily: 'Zilla-Slab',
+    color: '#000000',
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  notificationIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 24,
+  },
+  bannerContainer: {
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginBottom: 24,
+    alignSelf: 'center',
+  },
+  bannerImage: {
+    width: '100%',
+    height: '100%',
   },
 });
+
+export default HomeScreen;
