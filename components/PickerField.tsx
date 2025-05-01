@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Platform, Dimensions, Image, TouchableOpacity, Animated } from 'react-native';
 import { icons } from '@/constants/icons';
 
@@ -8,29 +8,32 @@ type Props = {
   onValueChange: (value: string) => void;
   placeholder: string;
   items: { label: string; value: string }[];
+  pickerId: string;
+  isOpen: boolean;
+  onToggle: (pickerId: string) => void;
 };
 
-export default function DropdownField({ label, value, onValueChange, placeholder, items }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [rotation] = useState(new Animated.Value(0));
+export default function PickerField({ label, value, onValueChange, placeholder, items, pickerId, isOpen, onToggle }: Props) {
+  const [rotation] = useState(new Animated.Value(isOpen ? 180 : 0));
 
   const selectedItem = items.find(item => item.value === value);
   const displayText = selectedItem ? selectedItem.label : placeholder;
 
-  const handleSelect = (item: { label: string; value: string }) => {
-    onValueChange(item.value);
-    setIsOpen(false);
-    toggleDropdown();
-  };
-
-  const toggleDropdown = () => {
-    const toValue = isOpen ? 0 : 180;
+  useEffect(() => {
     Animated.timing(rotation, {
-      toValue,
+      toValue: isOpen ? 180 : 0,
       duration: 200,
       useNativeDriver: true,
     }).start();
-    setIsOpen(!isOpen);
+  }, [isOpen, rotation]);
+
+  const handleSelect = (item: { label: string; value: string }) => {
+    onValueChange(item.value);
+    onToggle(pickerId);
+  };
+
+  const toggleDropdown = () => {
+    onToggle(pickerId);
   };
 
   const rotateInterpolate = rotation.interpolate({
@@ -130,7 +133,7 @@ const styles = StyleSheet.create({
   },
   placeholder: {
     color: '#C2C2C2',
-    left:6,
+    left: 6,
   },
   arrowImage: {
     width: 60,

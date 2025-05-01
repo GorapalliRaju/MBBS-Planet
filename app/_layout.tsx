@@ -4,46 +4,26 @@ import { Dimensions } from "react-native";
 import Toast,{BaseToast,ErrorToast} from 'react-native-toast-message';
 import './globals.css';
 import { images } from "@/constants/images";
-// Custom toast config to change position
-const toastConfig = {
-  success: (props: any) => {
-    const screenHeight = Dimensions.get('window').height;
+import * as SplashScreen from 'expo-splash-screen';
+import { useFonts } from "expo-font";
+import { useEffect } from "react";
+import CustomToast from "@/components/CustomToast";
 
-    return (
-      <BaseToast
-        {...props}
-        style={{ 
-          //position: 'absolute',
-          //top: screenHeight / 2 - 30, // 30 = half of the toast height (you set height: 60)
-          alignSelf: 'center',
-          borderLeftColor: 'green',
-          //height: 60,
-          bottom:80,
-          width: '80%', // Optional: control toast width
-        }}
-        contentContainerStyle={{
-          paddingHorizontal: 15,
-        }}
-        text1Style={{
-          fontSize: 18,
-          fontWeight: 'bold',
-        }}
-        text2Style={{
-          fontSize: 15,
-          color: 'gray',
-        }}
-        renderLeadingIcon={() => (
-          <Image
-            source={images.analytics}
-            style={{ width: 30, height: 40 }}
-          />
-        )}
-      />
-    );
-  },
-};
+SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const [fontsLoaded]=useFonts({
+    'Zilla-Slab': require('../assets/fonts/ZillaSlab-Regular.ttf'),
+  });
+
+  useEffect(()=>{
+    if(fontsLoaded){
+      SplashScreen.hideAsync();
+    }
+  },[fontsLoaded]);
+
+  if(!fontsLoaded)return null;
+  
   return (
   <>
   <Stack initialRouteName="splashscreen">
@@ -204,7 +184,7 @@ export default function RootLayout() {
 
   <Stack.Screen name="ViewPdfScreen"/>
   </Stack>
-  <Toast config={toastConfig}/>
+  <CustomToast />
   </>
   );
 }

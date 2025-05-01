@@ -1,4 +1,3 @@
-// screens/RegistrationScreen.tsx
 import React, { useState } from 'react';
 import {
   View,
@@ -12,6 +11,7 @@ import PickerField from '../components/PickerField';
 
 export default function RegistrationScreen() {
   const router = useRouter();
+  const [openPicker, setOpenPicker] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     name: '',
@@ -36,31 +36,35 @@ export default function RegistrationScreen() {
     router.push('/(tabs)');
   };
 
+  const handlePickerToggle = (pickerId: string) => {
+    setOpenPicker((prev) => (prev === pickerId ? null : pickerId));
+  };
+
   return (
     <View className="flex-1 bg-white">
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 64 }}>
         <View style={{ maxWidth: 360, alignSelf: 'center', gap: 8 }}>
-                <Text
-                  style={{
-                    fontSize: 20,
-                    fontWeight: 'bold',
-                    color: '#111111',
-                    lineHeight: 24,
-                  }}
-                >
-                  Enter your details
-                </Text>
-                <Text
-                  style={{
-                    fontSize: 13,
-                    color: '#666',
-                    lineHeight: 20,
-                    paddingBottom:15,
-                  }}
-                >
-                  Lorem esse duis culpa consectetur nulla anim amet aliquip aliqua quis mollit adipisicing.
-                </Text>
-              </View>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+              color: '#111111',
+              lineHeight: 24,
+            }}
+          >
+            Enter your details
+          </Text>
+          <Text
+            style={{
+              fontSize: 13,
+              color: '#666',
+              lineHeight: 20,
+              paddingBottom: 15,
+            }}
+          >
+            Lorem esse duis culpa consectetur nulla anim amet aliquip aliqua quis mollit adipisicing.
+          </Text>
+        </View>
 
         <FormField
           label="Name"
@@ -79,6 +83,9 @@ export default function RegistrationScreen() {
             { label: 'Female', value: 'Female' },
             { label: 'Other', value: 'Other' },
           ]}
+          pickerId="gender"
+          isOpen={openPicker === 'gender'}
+          onToggle={handlePickerToggle}
         />
 
         <FormField
@@ -89,7 +96,7 @@ export default function RegistrationScreen() {
         />
 
         <View className="flex-row justify-between gap-3">
-          <View className="flex-1 mb-4 ">
+          <View className="flex-1 mb-4">
             <PickerField
               label="State"
               value={form.state}
@@ -100,6 +107,9 @@ export default function RegistrationScreen() {
                 { label: 'Maharashtra', value: 'Maharashtra' },
                 { label: 'Karnataka', value: 'Karnataka' },
               ]}
+              pickerId="state"
+              isOpen={openPicker === 'state'}
+              onToggle={handlePickerToggle}
             />
           </View>
           <View className="flex-1 mb-4">
@@ -113,6 +123,9 @@ export default function RegistrationScreen() {
                 { label: 'Mumbai', value: 'Mumbai' },
                 { label: 'Bangalore', value: 'Bangalore' },
               ]}
+              pickerId="city"
+              isOpen={openPicker === 'city'}
+              onToggle={handlePickerToggle}
             />
           </View>
         </View>
@@ -128,6 +141,9 @@ export default function RegistrationScreen() {
             { label: 'SC', value: 'SC' },
             { label: 'ST', value: 'ST' },
           ]}
+          pickerId="category"
+          isOpen={openPicker === 'category'}
+          onToggle={handlePickerToggle}
         />
 
         <FormField
@@ -154,31 +170,35 @@ export default function RegistrationScreen() {
           keyboardType="numeric"
         />
 
-       
-            <PickerField
-              label="Reservation/Quota(if any)"
-              value={form.quota}
-              onValueChange={(value) => handleChange('quota', value)}
-              placeholder="Select the category"
-              items={[
-                { label: 'None', value: 'None' },
-                { label: 'NCC', value: 'NCC' },
-                { label: 'PWD', value: 'PWD' },
-                { label: 'Sports', value: 'Sports' },
-              ]}
-            />
-       
-            <PickerField
-              label="Delhi Quota(if any)"
-              value={form.delhiQuota}
-              onValueChange={(value) => handleChange('delhiQuota', value)}
-              placeholder="Select the category"
-              items={[
-                { label: 'Yes', value: 'Yes' },
-                { label: 'No', value: 'No' },
-              ]}
-            />
-          
+        <PickerField
+          label="Reservation/Quota(if any)"
+          value={form.quota}
+          onValueChange={(value) => handleChange('quota', value)}
+          placeholder="Select the category"
+          items={[
+            { label: 'None', value: 'None' },
+            { label: 'NCC', value: 'NCC' },
+            { label: 'PWD', value: 'PWD' },
+            { label: 'Sports', value: 'Sports' },
+          ]}
+          pickerId="quota"
+          isOpen={openPicker === 'quota'}
+          onToggle={handlePickerToggle}
+        />
+
+        <PickerField
+          label="Delhi Quota(if any)"
+          value={form.delhiQuota}
+          onValueChange={(value) => handleChange('delhiQuota', value)}
+          placeholder="Select the category"
+          items={[
+            { label: 'Yes', value: 'Yes' },
+            { label: 'No', value: 'No' },
+          ]}
+          pickerId="delhiQuota"
+          isOpen={openPicker === 'delhiQuota'}
+          onToggle={handlePickerToggle}
+        />
 
         <TouchableOpacity
           className="bg-[#3182CE] py-4 rounded-xl mt-6 items-center"

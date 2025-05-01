@@ -4,7 +4,7 @@
     "slug": "mbbs-planet",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/initialsplash.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -27,7 +27,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/initialsplash.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
@@ -37,6 +37,11 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "updates": {
+  "enabled": false,
+  "fallbackToCacheTimeout": 0
+}
+
   }
 }

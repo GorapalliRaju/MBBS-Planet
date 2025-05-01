@@ -1,43 +1,58 @@
 import { images } from '@/constants/images';
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, SafeAreaView } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  Image,
+  ScrollView,
+  SafeAreaView,
+} from 'react-native';
 import PickerField from '@/components/PickerField';
 import { useNavigation } from 'expo-router';
+
 const PayToSenior = () => {
   const [form, setForm] = useState({
     college: '',
-    state:'',
-    choosecollege:'',
+    state: '',
+    choosecollege: '',
   });
+
+  const [openPickerId, setOpenPickerId] = useState<string | null>(null);
+  const navigation = useNavigation();
 
   const handleChange = (key: string, value: string) => {
     setForm({ ...form, [key]: value });
   };
-  const navigation=useNavigation();
+
+  const togglePicker = (pickerId: string) => {
+    setOpenPickerId(prev => (prev === pickerId ? null : pickerId));
+  };
+
   return (
     <SafeAreaView style={styles.wrapper}>
       <View style={styles.content}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           <View style={{ gap: 10 }}>
-            <View style={{width:242,height:27}}>
-            <Text style={styles.heading}>Get in touch with Senior</Text>
+            <View style={{ width: 242, height: 27 }}>
+              <Text style={styles.heading}>Get in touch with Senior</Text>
             </View>
-            <View style={{width:328,height:50}}>
-            <Text style={styles.subHeading}>
-              Below is the explained video of how to get in touch with the senior
-            </Text>
+            <View style={{ width: 328, height: 50 }}>
+              <Text style={styles.subHeading}>
+                Below is the explained video of how to get in touch with the senior
+              </Text>
             </View>
           </View>
+
           {/* Video */}
           <View style={styles.thumbnailWrapper}>
             <Image source={images.banner} style={styles.thumbnail} />
             <View style={styles.overlay} />
-
             <Image source={images.youtube} style={styles.youtubeIcon} />
           </View>
 
           <View>
-
             <PickerField
               label="Type Of College"
               value={form.college}
@@ -47,6 +62,9 @@ const PayToSenior = () => {
                 { label: 'Government', value: 'government' },
                 { label: 'Private', value: 'private' },
               ]}
+              pickerId="college"
+              isOpen={openPickerId === 'college'}
+              onToggle={togglePicker}
             />
 
             <PickerField
@@ -60,8 +78,10 @@ const PayToSenior = () => {
                 { label: 'Karnataka', value: 'karnataka' },
                 { label: 'Tamil Nadu', value: 'tamil_nadu' },
                 { label: 'Maharashtra', value: 'maharashtra' },
-                // Add more states as needed
               ]}
+              pickerId="state"
+              isOpen={openPickerId === 'state'}
+              onToggle={togglePicker}
             />
 
             <PickerField
@@ -74,12 +94,12 @@ const PayToSenior = () => {
                 { label: 'IIT Delhi', value: 'iit_delhi' },
                 { label: 'NIT Warangal', value: 'nit_warangal' },
                 { label: 'BITS Pilani', value: 'bits_pilani' },
-                // Add more colleges as needed
               ]}
+              pickerId="choosecollege"
+              isOpen={openPickerId === 'choosecollege'}
+              onToggle={togglePicker}
             />
-
           </View>
-
         </ScrollView>
       </View>
 
@@ -89,7 +109,12 @@ const PayToSenior = () => {
           <Text style={styles.price}>₹500</Text>
           <Text style={styles.tax}>All Tax included </Text>
         </View>
-        <TouchableOpacity style={styles.payNowButton} onPress={()=>{navigation.navigate('SeniorDetailsScreen')}}>
+        <TouchableOpacity
+          style={styles.payNowButton}
+          onPress={() => {
+            navigation.navigate('SeniorDetailsScreen');
+          }}
+        >
           <Text style={styles.payNowText}>Pay Now</Text>
         </TouchableOpacity>
       </View>
@@ -110,7 +135,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   scrollContainer: {
-    paddingBottom: 100, // leave space for footer
+    paddingBottom: 100,
   },
   heading: {
     fontSize: 18,
@@ -135,10 +160,9 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: '#0000005C', // 0.4 is 40% opacity
-    zIndex: 1, // Just below YouTube icon which has zIndex: 2
+    backgroundColor: '#0000005C',
+    zIndex: 1,
   },
-
   thumbnailWrapper: {
     position: 'relative',
     width: '100%',
@@ -147,58 +171,45 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     overflow: 'hidden',
   },
-  videoContainer: {
-    position: 'relative',
-    borderRadius: 8,
-    overflow: 'hidden',
-    marginBottom: 20,
-  },
   thumbnail: {
     width: '100%',
     height: 200,
   },
-  playIconOverlay: {
-    position: 'absolute',
-    top: '40%',
-    left: '45%',
-  },
-  playIcon: {
-    width: 40,
-    height: 40,
-    tintColor: 'white',
-  },
   footer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#E2E8F0',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#ECECEC',
-    backgroundColor: '#fff',
+    alignItems: 'center',
   },
   priceContainer: {
-    justifyContent: 'center',
+    flexDirection: 'column',
   },
   price: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#000',
+    color: '#1A202C',
   },
   tax: {
-    color: '#888',
     fontSize: 12,
+    color: '#718096',
   },
   payNowButton: {
+    backgroundColor: '#3182CE',
+    paddingVertical: 10,
+    paddingHorizontal: 24,
     borderRadius: 8,
-    paddingVertical: 14,
-    paddingHorizontal: 60,
-    backgroundColor: '#1E7ED4',
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   payNowText: {
     color: '#fff',
-    fontWeight: '600',
     fontSize: 16,
+    fontWeight: '600',
   },
 });
