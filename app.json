@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.raju560.mbbsplanet"
     },
     "web": {
       "bundler": "metro",
@@ -39,9 +40,17 @@
       "typedRoutes": true
     },
     "updates": {
-  "enabled": false,
-  "fallbackToCacheTimeout": 0
-}
-
+      "enabled": false,
+      "fallbackToCacheTimeout": 0
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "09262fdf-a16b-48f6-be78-fbd547fa3957"
+      }
+    },
+    "owner": "raju560"
   }
 }

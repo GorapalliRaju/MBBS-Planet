@@ -16,11 +16,15 @@ export default function RootLayout() {
     'Zilla-Slab': require('../assets/fonts/ZillaSlab-Regular.ttf'),
   });
 
-  useEffect(()=>{
-    if(fontsLoaded){
-      SplashScreen.hideAsync();
+  useEffect(() => {
+    if (fontsLoaded) {
+      // Add a 2-second delay before hiding the splash screen
+      setTimeout(() => {
+        SplashScreen.hideAsync();
+      }, 2000); // 2000ms = 2 seconds
     }
-  },[fontsLoaded]);
+  }, [fontsLoaded]);
+
 
   if(!fontsLoaded)return null;
   
