@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Platform, Dimensions, Image, TouchableOpacity, 
 import { icons } from '@/constants/icons';
 
 type Props = {
-  label: string;
+  label?: string;
   value: string;
   onValueChange: (value: string) => void;
   placeholder: string;
@@ -11,9 +11,10 @@ type Props = {
   pickerId: string;
   isOpen: boolean;
   onToggle: (pickerId: string) => void;
+  hideLabel?:boolean;
 };
 
-export default function PickerField({ label, value, onValueChange, placeholder, items, pickerId, isOpen, onToggle }: Props) {
+export default function PickerField({ label, value, onValueChange, placeholder, items, pickerId, isOpen, onToggle,hideLabel = false, }: Props) {
   const [rotation] = useState(new Animated.Value(isOpen ? 180 : 0));
 
   const selectedItem = items.find(item => item.value === value);
@@ -43,7 +44,7 @@ export default function PickerField({ label, value, onValueChange, placeholder, 
 
   return (
     <View style={styles.field}>
-      <Text style={styles.label}>{label}</Text>
+      {!hideLabel && label && <Text style={styles.label}>{label}</Text>}
 
       <View style={styles.pickerWrapper}>
         <TouchableOpacity

@@ -40,4 +40,9 @@ export const icons={
     seniordetailsmeeticon: require('../assets/icons/seniordetailsmeeticon.png'),
     collegedeliveredicon: require('../assets/icons/collegedeliveredicon.png'),
     lockicon: require('../assets/icons/lockicon.png'),
+    CaretDown: require('../assets/icons/CaretDown.png'),
+    upload: require('../assets/icons/upload.png'),
+    privacy: require('../assets/icons/privacy.png'),
+    uploadedicon: require('../assets/icons/uploadedicon.png'),
+    preferencelist: require('../assets/icons/preferencelist.png'),
 }

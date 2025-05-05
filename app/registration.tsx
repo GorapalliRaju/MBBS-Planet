@@ -42,7 +42,7 @@ export default function RegistrationScreen() {
 
   return (
     <View className="flex-1 bg-white">
-      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 64 }}>
+      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 15 }}>
         <View style={{ maxWidth: 360, alignSelf: 'center', gap: 8 }}>
           <Text
             style={{
@@ -199,7 +199,7 @@ export default function RegistrationScreen() {
           isOpen={openPicker === 'delhiQuota'}
           onToggle={handlePickerToggle}
         />
-
+        
         <TouchableOpacity
           className="bg-[#3182CE] py-4 rounded-xl mt-6 items-center"
           onPress={handleSubmit}

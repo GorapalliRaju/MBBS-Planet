@@ -134,6 +134,8 @@ const PersonalisedCounsellingScreen = () => {
                         onPress={() => {
                           if (item.title === 'Phone - O - Senior')
                             navigation.navigate('PayoseniorScreen')
+                          if(item.title === 'College List')
+                            navigation.navigate('CollegeListScreen')
                         }
                         }
                       >
@@ -263,7 +265,7 @@ const PersonalisedCounsellingScreen = () => {
                     <Text style={styles.label}>What will you get</Text>
 
                     {/* Benefit Descriptions */}
-                    {item.benefits.map((benefit, index) => (
+                    {item.benefits.map((benefit:any, index:any) => (
                       <View key={index} style={styles.benefitRow}>
                         <Image source={icons.checkicon} style={{ marginTop: 4 }} />
                         <Text style={styles.benefitText}>{benefit}</Text>

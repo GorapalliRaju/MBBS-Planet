@@ -43,7 +43,7 @@ const services = [
     desc: 'Check the personalized preference list',
     tag: null,
     tagColor: '',
-    route: null,
+    route: 'CheckListScreen',
   },
 ];
 

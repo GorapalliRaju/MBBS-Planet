@@ -11,8 +11,6 @@ import {
   Platform,
 
 } from 'react-native';
-import { WebView } from 'react-native-webview';
-import { images } from '@/constants/images';
 import { icons } from '@/constants/icons';
 import { BannerCarousel } from '@/components/BannerCarousel'
 import ServicesSection from '../../components/services';

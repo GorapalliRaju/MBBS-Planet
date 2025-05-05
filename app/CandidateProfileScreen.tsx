@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet,Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { icons } from '@/constants/icons';
 import { candidateData } from '@/utils/helper';
 
@@ -10,7 +9,7 @@ const CandidateDetailsScreen = () => {
       {/* User Details Header */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Image source={icons.candidateprofile}/>
+          <Image source={icons.candidateprofile} />
           <Text style={styles.sectionTitle}>User Details</Text>
         </View>
 
@@ -50,57 +49,55 @@ const CandidateDetailsScreen = () => {
           </View>
         </View>
       </View>
-       
-       <View style={styles.horizontalLine} />
-
+      <View style={{marginBottom:20,}}>
+      <View style={styles.horizontalLine} />
+      </View>
       {/* College Preferences Header */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Image source={icons.collegedeliveredicon} style={{width:24,height:24}}/>
-          <Text style={styles.sectionTitle}>College Preference Delivered</Text>
+          <Image source={icons.collegedeliveredicon} style={{ width: 24, height: 24 }} />
+          <Text style={styles.sectionTitle}>Counselling Milestones</Text>
         </View>
 
         {/* College Cards */}
         {candidateData.collegePreferences.map((pref, index) => (
           <View key={index} style={styles.collegeCard}>
-            <View style={{position: 'relative', paddingLeft: 19}}>
-            {/* Left Border */}
-  <View style={{
-    position: 'absolute',
-    left: -6,
-    top: 10,          // vertical offset
-    height: 53,       // height of the red vertical line
-    width: 1,
-    backgroundColor: '#D2D2D2',
-  }} />
+            <View style={styles.collegeCardContent}>
+              {/* Vertical Line Decoration */}
+              <View style={styles.leftDecoration}>
+                <View style={styles.leftLine} />
+                <View style={styles.topLine} />
+                <View style={styles.bottomLine} />
+              </View>
 
-  {/* Top Border */}
-  <View style={{
-    position: 'absolute',
-    left: -6,
-    top: 10,          // same as left border start
-    width: 19,        // how long the top border is
-    height: 1,
-    backgroundColor: '#D2D2D2',
-  }} />
+              <View style={styles.collegeBlock}>
+                <Text style={styles.label}>{pref.type}</Text>
+                <Text style={styles.value}>{pref.name}</Text>
+              </View>
 
-  {/* Bottom Border */}
-  <View style={{
-    position: 'absolute',
-    left: -6,
-    top: 63,          // top + height of left border
-    width: 40,        // same length as top border
-    height: 1,
-    backgroundColor: '#D2D2D2',
-  }} />
-            <View style={styles.collegeBlock}>
-              <Text style={styles.label}>{pref.type}</Text>
-              <Text style={styles.value}>{pref.name}</Text>
+              <View style={styles.joiningBlock}>
+                <Text style={styles.label}>Joining Status</Text>
+                <Text style={styles.value}>{pref.joiningStatus}</Text>
+              </View>
             </View>
-            <View style={styles.joiningBlock}>
-              <Text style={styles.label}>Joining Status</Text>
-              <Text style={styles.value}>{pref.joiningStatus}</Text>
+             <View style={{gap:10}}>
+            {/* View Result PDF */}
+            <TouchableOpacity onPress={() => { /* Add link or navigation */ }}>
+              <Text style={styles.link}>View Result PDF</Text>
+            </TouchableOpacity>
+
+            {/* College Wise Allotment Link */}
+            <TouchableOpacity onPress={() => { /* Add link or navigation */ }}>
+              <Text style={{fontSize:14,fontWeight:'600'}}>
+                See College wise allotment - <Text style={styles.linkHighlight}>Click here</Text>
+              </Text>
+            </TouchableOpacity>
             </View>
+            {/* Conditional horizontal line (skip last item) */}
+            <View style={{marginTop:20}}>
+            {index !== candidateData.collegePreferences.length - 1 && (
+              <View style={styles.horizontalLine} />
+            )}
             </View>
           </View>
         ))}
@@ -118,11 +115,10 @@ const styles = StyleSheet.create({
   horizontalLine: {
     height: 1,
     backgroundColor: '#ECECEC',
-    marginTop: 0,
-    marginBottom:24,
+    marginBottom: 4,
   },
   section: {
-    marginBottom: 24,
+    marginBottom: 20,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -133,7 +129,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000000',
+    color: '#000',
   },
   block: {
     width: 180,
@@ -154,10 +150,9 @@ const styles = StyleSheet.create({
   },
   inlineRow: {
     flexDirection: 'row',
-    //justifyContent: 'space-between',
     paddingHorizontal: 32,
     marginBottom: 12,
-    gap:10,
+    gap: 10,
   },
   inlineBoxSmall: {
     width: 100,
@@ -165,23 +160,61 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   collegeCard: {
-    width: 271,
-    height: 120,
+    width: '100%',
     borderRadius: 8,
-    marginVertical: 2,
-    marginLeft: 15,
+    padding: 10,
+    
+  },
+  collegeCardContent: {
+    position: 'relative',
+    paddingLeft: 19,
+  },
+  leftDecoration: {
+    position: 'absolute',
+    left: -6,
+    top: 10,
+  },
+  leftLine: {
+    height: 53,
+    width: 1,
+    backgroundColor: '#D2D2D2',
+  },
+  topLine: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 19,
+    height: 1,
+    backgroundColor: '#D2D2D2',
+  },
+  bottomLine: {
+    position: 'absolute',
+    top: 53,
+    left: 0,
+    width: 40,
+    height: 1,
+    backgroundColor: '#D2D2D2',
   },
   collegeBlock: {
-    width: 249,
-    height: 44,
+    marginBottom: 8,
     gap: 4,
   },
   joiningBlock: {
-    width: 143,
-    height: 44,
+    marginBottom: 8,
     gap: 4,
-    marginTop: 8,
     marginLeft: 20,
+  },
+  link: {
+    color: '#1E7ED4',
+    fontSize: 14,
+    marginTop: 8,
+    fontWeight:'600',
+    textDecorationLine:'underline',
+  },
+  linkHighlight: {
+    textDecorationLine: 'underline',
+    fontWeight: '600',
+    color:'#1E7ED4',
   },
 });
 

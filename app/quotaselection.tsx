@@ -8,11 +8,11 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { RangeSelector } from '@/components/RangeSelector';
 const formFields = [
   'Quota',
   'Category',
-  'Rank',
-  'Marks',
+  'Marks/Rank',
   'State',
   'Established Year',
   'Airport City',
@@ -34,8 +34,7 @@ const QuotaSelectionScreen = () => {
 
   const [formData, setFormData] = useState<any>({
     Category: '',
-    Rank: '',
-    Marks: '',
+    'Marks/Rank':'',
     State: '',
     'Established Year': '',
     'Airport City': '',
@@ -53,8 +52,7 @@ const QuotaSelectionScreen = () => {
     setSelectedQuota([]);
     setFormData({
       Category: '',
-      Rank: '',
-      Marks: '',
+      'Marks/Rank':'',
       State: '',
       'Established Year': '',
       'Airport City': '',
@@ -208,41 +206,9 @@ const QuotaSelectionScreen = () => {
           </View>
         );
 
-        case 'Rank':
+      case 'Marks/Rank':
         return (
-          <View>
-            <Text style={styles.label}>Rank Range</Text>
-            <Text style={{ color: '#505050', marginBottom: 15, }}>Select the range of your rank</Text>
-            <View style={styles.row}>
-              <View style={[styles.inputContainer, { flex: 1 }]}>
-                <Text style={styles.smallLabel}>From</Text>
-                <TextInput
-                  keyboardType="numeric"
-                  value={marks.from}
-                  onChangeText={val => setMarks(prev => ({ ...prev, from: val }))}
-                  placeholder="e.g. 300"
-                  style={styles.input}
-                />
-              </View>
-
-              {/* Dash divider */}
-              <View style={styles.dashContainer}>
-                <Text style={styles.dash}>-</Text>
-              </View>
-
-              <View style={[styles.inputContainer, { flex: 1 }]}>
-                <Text style={styles.smallLabel}>To</Text>
-                <TextInput
-                  keyboardType="numeric"
-                  value={marks.to}
-                  onChangeText={val => setMarks(prev => ({ ...prev, to: val }))}
-                  placeholder="e.g. 700"
-                  style={styles.input}
-                />
-              </View>
-            </View>
-
-          </View>
+          <RangeSelector />
         );
 
       default:

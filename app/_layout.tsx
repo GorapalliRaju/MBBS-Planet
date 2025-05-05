@@ -1,14 +1,10 @@
 import { Stack } from "expo-router";
-import { Image } from "react-native";
-import { Dimensions } from "react-native";
-import Toast,{BaseToast,ErrorToast} from 'react-native-toast-message';
 import './globals.css';
-import { images } from "@/constants/images";
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from "expo-font";
 import { useEffect } from "react";
 import CustomToast from "@/components/CustomToast";
-
+import { StatusBar} from "react-native";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
@@ -30,6 +26,10 @@ export default function RootLayout() {
   
   return (
   <>
+  <StatusBar 
+  barStyle="dark-content"
+  backgroundColor="transparent"
+  />
   <Stack initialRouteName="splashscreen">
     <Stack.Screen name="splashscreen" options={{headerShown:false}}/>
     <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -174,6 +174,35 @@ export default function RootLayout() {
 
 <Stack.Screen name="SeniorDetailsScreen" options={{
     title: "PHONE O SENIOR",
+    headerTitleStyle: {
+      width: 137,
+      height: 22,
+      fontFamily: 'Noto Sans',  // Make sure the font is loaded
+      fontWeight: '600',
+      fontSize: 16,
+      lineHeight: 20, // Since 100% of 20px
+      letterSpacing: 0.02 * 20, // 2% of font size
+    },
+    headerTitleAlign: 'center',
+  }} />
+
+
+<Stack.Screen name="CollegeListScreen" options={{
+    title: "COLLEGE LIST",
+    headerTitleStyle: {
+      width: 137,
+      height: 22,
+      fontFamily: 'Noto Sans',  // Make sure the font is loaded
+      fontWeight: '600',
+      fontSize: 16,
+      lineHeight: 20, // Since 100% of 20px
+      letterSpacing: 0.02 * 20, // 2% of font size
+    },
+    headerTitleAlign: 'center',
+  }} />
+  
+  <Stack.Screen name="CheckListScreen" options={{
+    title: "COLLEGE LIST",
     headerTitleStyle: {
       width: 137,
       height: 22,
