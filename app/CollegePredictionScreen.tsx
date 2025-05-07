@@ -1,6 +1,6 @@
 // CollegePredictionScreen.tsx
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -14,12 +14,19 @@ import {
 import { router } from 'expo-router';
 import { images } from '@/constants/images';
 import { icons } from '@/constants/icons';
-
+import { fetchPredictionData } from '@/redux/collegePredictorslice';
+import { useDispatch,useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/redux/store';
 const CollegePredictionScreen = () => {
+  const dispatch = useDispatch<AppDispatch>();
   const handleTryNow = () => {
     router.push('/quotaselection');
   };
+  useEffect(() => {
+    dispatch(fetchPredictionData());
+  }, [dispatch]);
 
+  const { isLoading, data, isError } = useSelector((state: RootState) => state.collegePredictor)
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>

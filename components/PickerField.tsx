@@ -11,10 +11,20 @@ type Props = {
   pickerId: string;
   isOpen: boolean;
   onToggle: (pickerId: string) => void;
-  hideLabel?:boolean;
+  hideLabel?: boolean;
 };
 
-export default function PickerField({ label, value, onValueChange, placeholder, items, pickerId, isOpen, onToggle,hideLabel = false, }: Props) {
+export default function PickerField({
+  label,
+  value,
+  onValueChange,
+  placeholder,
+  items,
+  pickerId,
+  isOpen,
+  onToggle,
+  hideLabel = false,
+}: Props) {
   const [rotation] = useState(new Animated.Value(isOpen ? 180 : 0));
 
   const selectedItem = items.find(item => item.value === value);
@@ -144,7 +154,6 @@ const styles = StyleSheet.create({
     bottom: 15,
     right: 20,
     tintColor: '#4A5568',
-    marginTop: Platform.OS === 'android' ? 2 : 4,
   },
   dropdown: {
     position: 'absolute',

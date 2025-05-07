@@ -1,8 +1,7 @@
-// PremiumDataScreen.tsx
 import { icons } from '@/constants/icons';
 import { images } from '@/constants/images';
 import { router } from 'expo-router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   View,
   Text,
@@ -19,8 +18,20 @@ const horizontalPadding = 32; // 16px padding on each side
 const bannerWidth = width - horizontalPadding;
 const bannerHeight = bannerWidth * 0.56; // Assuming 16:9 ratio
 import { files } from '@/utils/helper';
+import { fetchPredictionData } from '@/redux/collegePredictorslice';
+import { useDispatch, useSelector } from 'react-redux'; // Corrected import
+import { RootState, AppDispatch } from '@/redux/store'; // Corrected import
 
 const PremiumDataScreen = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { isLoading, data, isError } = useSelector(
+    (state: RootState) => state.collegePredictor
+  );
+
+  useEffect(() => {
+    dispatch(fetchPredictionData());
+  }, [dispatch]);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -31,39 +42,61 @@ const PremiumDataScreen = () => {
 
             <Image source={images.youtube} style={styles.youtubeIcon} />
           </View>
+          <Text>{data ? data.length : 0}</Text>
+          <Text>{data?.[0]?.title ?? 'No title available'}</Text>
 
           <View style={styles.section}>
-            <View style={{width:297,}}>
-                        <Text style={styles.mainTitle}>
-                          Premium Data Analysis - AIQ & STATE ALL ROUND<Text style={{color:'#4D4D4D'}}>(2021-2022 COMPARISON)</Text>
-                        </Text>
-                        </View>
+            <View style={{ width: 297 }}>
+              <Text style={styles.mainTitle}>
+                Premium Data Analysis - AIQ & STATE ALL ROUND
+                <Text style={{ color: '#4D4D4D' }}>
+                  (2021-2022 COMPARISON)
+                </Text>
+              </Text>
+            </View>
             <View style={{ gap: 5 }}>
-              <View style={styles.sectionHeader} className='mt-3 gap-1'>
-                <Image source={icons.description} style={styles.icon} resizeMode="contain" />
+              <View style={styles.sectionHeader} className="mt-3 gap-1">
+                <Image
+                  source={icons.description}
+                  style={styles.icon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.sectionTitle}>Description</Text>
               </View>
               <View style={styles.horizontalLine} />
-              <View style={{width:310,height:110}}>
-              <Text style={styles.text}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. 
-              </Text>
+              <View style={{ width: 310, height: 110 }}>
+                <Text style={styles.text}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                  eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
+                  enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                  nisi ut aliquip ex ea commodo consequat.
+                </Text>
               </View>
-              <View style={styles.sectionHeader} className='mt-3 gap-2'>
-                <Image source={icons.content} style={styles.icon} resizeMode="contain" />
+              <View style={styles.sectionHeader} className="mt-3 gap-2">
+                <Image
+                  source={icons.content}
+                  style={styles.icon}
+                  resizeMode="contain"
+                />
                 <Text style={styles.sectionTitle}>Content</Text>
               </View>
 
               <View style={styles.horizontalLine} />
-              <View style={{width:310,height:49}}>
-              <Text style={styles.text}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                incididunt ut labore et dolore
-              </Text>
+              <View style={{ width: 310, height: 49 }}>
+                <Text style={styles.text}>
+                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                  eiusmod tempor incididunt ut labore et dolore
+                </Text>
               </View>
               <TouchableOpacity
                 style={styles.viewContentButton}
-                onPress={() => router.push({pathname:'/ViewContentScreen',params:{files:JSON.stringify(files)}})}>
+                onPress={() =>
+                  router.push({
+                    pathname: '/ViewContentScreen',
+                    params: { files: JSON.stringify(files) },
+                  })
+                }
+              >
                 <Text style={styles.viewContentText}>View Content</Text>
               </TouchableOpacity>
             </View>

@@ -1,4 +1,3 @@
-import { images } from '@/constants/images';
 import React, { useState } from 'react';
 import {
   View,
@@ -9,9 +8,20 @@ import {
   ScrollView,
   SafeAreaView,
 } from 'react-native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
 import PickerField from '@/components/PickerField';
-import { useNavigation } from 'expo-router';
-
+import { images } from '@/constants/images';
+interface Plan {
+  name: string;
+  price: number;
+  benefits: string[];
+}
+type RootStackParamList = {
+  PayoseniorScreen: undefined;
+  CollegeListScreen: undefined;
+  PaymentScreen: { selectedPlan: Plan | undefined };
+  SeniorDetailsScreen: undefined; // Add SeniorDetailsScreen
+};
 const PayToSenior = () => {
   const [form, setForm] = useState({
     college: '',
@@ -20,7 +30,7 @@ const PayToSenior = () => {
   });
 
   const [openPickerId, setOpenPickerId] = useState<string | null>(null);
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   const handleChange = (key: string, value: string) => {
     setForm({ ...form, [key]: value });
@@ -122,8 +132,6 @@ const PayToSenior = () => {
   );
 };
 
-export default PayToSenior;
-
 const styles = StyleSheet.create({
   wrapper: {
     flex: 1,
@@ -213,3 +221,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+
+export default PayToSenior;
