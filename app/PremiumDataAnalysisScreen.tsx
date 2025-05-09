@@ -42,8 +42,11 @@ const PremiumDataScreen = () => {
 
             <Image source={images.youtube} style={styles.youtubeIcon} />
           </View>
-          <Text>{data ? data.length : 0}</Text>
-          <Text>{data?.[0]?.title ?? 'No title available'}</Text>
+          <Text>{data?.message ?? 'No message'}</Text>
+          <Text>User ID: {data?.userId ?? 'N/A'}</Text>
+          <Text>Time: {data?.timestamp ?? 'N/A'}</Text>
+          <Text>Status: {data?.success ? 'Success' : 'Failed'}</Text>
+
 
           <View style={styles.section}>
             <View style={{ width: 297 }}>

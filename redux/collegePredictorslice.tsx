@@ -4,10 +4,18 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export const fetchPredictionData = createAsyncThunk(
   'collegePredictor/fetchPredictionData',
   async () => {
-    const response = await fetch('https://jsonplaceholder.typicode.com/todos');
-    return response.json();
+    const response = await fetch('http://192.168.55.102:7000/');
+    
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    const data = await response.json();  // 👈 Parse JSON here
+    console.log("Fetched data:", data);  // 👈 This logs the actual content
+    return data;
   }
 );
+
 
 interface CollegePredictorState {
   isLoading: boolean;

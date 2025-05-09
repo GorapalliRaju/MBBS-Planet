@@ -16,14 +16,14 @@ export default function RegistrationScreen() {
   const [form, setForm] = useState({
     name: '',
     gender: '',
-    fatherName: '',
+    fathersName: '',
     state: '',
     city: '',
     category: '',
-    passingYear: '',
-    marks: '',
+    yearOfPassing12th: '', // Fixed typo from PassinyearOfg12th
+    marks12th: '',
     rank: '',
-    quota: '',
+    reservationQuota: '',
     delhiQuota: '',
   });
 
@@ -31,9 +31,34 @@ export default function RegistrationScreen() {
     setForm({ ...form, [key]: value });
   };
 
-  const handleSubmit = () => {
-    console.log(form);
-    router.push('/(tabs)');
+  const handleSubmit = async () => {
+    try {
+      // Log the form data for debugging
+      console.log('Form data:', form);
+      const jsonBody = JSON.stringify(form);
+      console.log('JSON body:', jsonBody);
+
+      const response = await fetch('http://192.168.55.102:7000/api/user/completeProfile', {
+        method: 'PATCH',
+        body: jsonBody,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+      });
+
+      const data = await response.json();
+      console.log("response", response);
+
+      if (response.ok) {
+        console.log('Profile completed:', data);
+        router.push('/(tabs)');
+      } else {
+        console.log('Failed to complete profile:', data.message);
+      }
+    } catch (error) {
+      console.error('Error submitting profile:', error);
+    }
   };
 
   const handlePickerToggle = (pickerId: string) => {
@@ -91,8 +116,8 @@ export default function RegistrationScreen() {
         <FormField
           label="Father's Name"
           placeholder="Enter father's name"
-          value={form.fatherName}
-          onChangeText={(text) => handleChange('fatherName', text)}
+          value={form.fathersName}
+          onChangeText={(text) => handleChange('fathersName', text)}
         />
 
         <View className="flex-row justify-between gap-3">
@@ -149,16 +174,16 @@ export default function RegistrationScreen() {
         <FormField
           label="Year of Passing 12th"
           placeholder="Enter the year of passing 12th"
-          value={form.passingYear}
-          onChangeText={(text) => handleChange('passingYear', text)}
+          value={form.yearOfPassing12th}
+          onChangeText={(text) => handleChange('yearOfPassing12th', text)}
           keyboardType="numeric"
         />
 
         <FormField
           label="12th Marks (Expected if no result)"
           placeholder="Enter your 12th marks"
-          value={form.marks}
-          onChangeText={(text) => handleChange('marks', text)}
+          value={form.marks12th}
+          onChangeText={(text) => handleChange('marks12th', text)}
           keyboardType="numeric"
         />
 
@@ -172,8 +197,8 @@ export default function RegistrationScreen() {
 
         <PickerField
           label="Reservation/Quota(if any)"
-          value={form.quota}
-          onValueChange={(value) => handleChange('quota', value)}
+          value={form.reservationQuota}
+          onValueChange={(value) => handleChange('reservationQuota', value)}
           placeholder="Select the category"
           items={[
             { label: 'None', value: 'None' },
@@ -181,8 +206,8 @@ export default function RegistrationScreen() {
             { label: 'PWD', value: 'PWD' },
             { label: 'Sports', value: 'Sports' },
           ]}
-          pickerId="quota"
-          isOpen={openPicker === 'quota'}
+          pickerId="reservationQuota" // Fixed pickerId to match field name
+          isOpen={openPicker === 'reservationQuota'}
           onToggle={handlePickerToggle}
         />
 
@@ -199,7 +224,7 @@ export default function RegistrationScreen() {
           isOpen={openPicker === 'delhiQuota'}
           onToggle={handlePickerToggle}
         />
-        
+
         <TouchableOpacity
           className="bg-[#3182CE] py-4 rounded-xl mt-6 items-center"
           onPress={handleSubmit}
