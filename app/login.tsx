@@ -28,7 +28,7 @@ export default function LoginScreen() {
   }
 
   try {
-    const response = await fetch('http://192.168.55.103:7000/api/user/verify', {
+    const response = await fetch('http://192.168.55.102:7000/api/user/verify', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

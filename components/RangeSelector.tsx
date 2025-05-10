@@ -1,12 +1,19 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated, Easing } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Animated, Easing, Image } from 'react-native';
 import { useState, useEffect, useRef } from 'react';
 import { icons } from '@/constants/icons';
 
-export const RangeSelector = () => {
-    const [selection, setSelection] = useState('');
-    const [dropdownVisible, setDropdownVisible] = useState(false);
-    const [inputValue, setInputValue] = useState('');
+interface RangeSelectorProps {
+    onSelectionChange: (selection: string) => void;
+    onValueChange: (value: number) => void;
+}
+
+export const RangeSelector: React.FC<RangeSelectorProps> = ({ onSelectionChange, onValueChange }) => {
+    const [selection, setSelection] = useState<string>('');
+    const [dropdownVisible, setDropdownVisible] = useState<boolean>(false);
+    const [inputValue, setInputValue] = useState<string>('');
+
     const rotateAnim = useRef(new Animated.Value(0)).current;
+
     useEffect(() => {
         Animated.timing(rotateAnim, {
             toValue: dropdownVisible ? 1 : 0,
@@ -15,10 +22,28 @@ export const RangeSelector = () => {
             easing: Easing.inOut(Easing.ease),
         }).start();
     }, [dropdownVisible]);
+
     const rotate = rotateAnim.interpolate({
         inputRange: [0, 1],
         outputRange: ['0deg', '180deg'],
     });
+
+    const handleSelection = (newSelection: string) => {
+        setSelection(newSelection);
+        onSelectionChange(newSelection);
+        setDropdownVisible(false);
+        setInputValue(''); // Reset input on change
+    };
+
+    const handleInputChange = (text: string) => {
+        // Allow only digits
+        const cleaned = text.replace(/[^0-9]/g, '');
+        setInputValue(cleaned);
+        if (cleaned !== '') {
+            onValueChange(Number(cleaned));
+        }
+    };
+
     return (
         <View>
             <Text style={styles.label}>Select your Range</Text>
@@ -35,49 +60,29 @@ export const RangeSelector = () => {
                     source={icons.CaretDown}
                     style={{ transform: [{ rotate }], width: 14, height: 14 }}
                 />
-
             </TouchableOpacity>
 
             {/* Dropdown Options */}
             {dropdownVisible && (
                 <View style={styles.dropdownOptions}>
-                    <TouchableOpacity
-                        onPress={() => {
-                            setSelection('Marks Range');
-                            setDropdownVisible(false);
-                        }}
-                        style={styles.dropdownOption}
-                    >
-                        <Text
-                            style={[
-                                styles.optionText,
-                                selection === 'Marks Range' && styles.selectedOption,
-                            ]}
+                    {['Marks Range', 'Rank Range'].map((item) => (
+                        <TouchableOpacity
+                            key={item}
+                            onPress={() => handleSelection(item)}
+                            style={styles.dropdownOption}
                         >
-                            Marks Range
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        onPress={() => {
-                            setSelection('Rank Range');
-                            setDropdownVisible(false);
-                        }}
-                        style={styles.dropdownOption}
-                    >
-                        <Text
-                            style={[
+                            <Text style={[
                                 styles.optionText,
-                                selection === 'Rank Range' && styles.selectedOption,
-                            ]}
-                        >
-                            Rank Range
-                        </Text>
-                    </TouchableOpacity>
+                                selection === item && styles.selectedOption
+                            ]}>
+                                {item}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
                 </View>
             )}
 
-            {/* Single Input UI for Range */}
+            {/* Input Field */}
             {selection && (
                 <View style={{ marginTop: 10 }}>
                     <Text style={{ color: '#505050', marginBottom: 10 }}>{selection}</Text>
@@ -85,7 +90,7 @@ export const RangeSelector = () => {
                         <TextInput
                             keyboardType="numeric"
                             value={inputValue}
-                            onChangeText={setInputValue}
+                            onChangeText={handleInputChange}
                             placeholder={selection === 'Marks Range' ? 'e.g. 300' : 'e.g. 1000'}
                             style={styles.input}
                         />
@@ -103,7 +108,6 @@ const styles = StyleSheet.create({
         marginBottom: 10,
         color: '#333',
     },
-
     dropdown: {
         borderWidth: 1,
         borderColor: '#ccc',
@@ -114,19 +118,11 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: '#fff',
-        marginBottom: 0,
     },
-
     dropdownText: {
         fontSize: 12,
         color: '#667085',
     },
-
-    dropdownArrow: {
-        fontSize: 16,
-        color: '#333',
-    },
-
     dropdownOptions: {
         backgroundColor: '#fff',
         borderWidth: 1,
@@ -134,12 +130,10 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         overflow: 'hidden',
     },
-
     dropdownOption: {
         paddingVertical: 4,
         paddingHorizontal: 15,
     },
-
     optionText: {
         fontSize: 12,
         height: 28,
@@ -148,24 +142,10 @@ const styles = StyleSheet.create({
         width: 160,
         color: '#000000',
     },
-
-    selectedText: {
-        color: '#1565C0',
-        fontWeight: '600',
-    },
-
     selectedOption: {
         backgroundColor: '#E8F5FF',
         color: '#1565C0',
     },
-
-    row: {
-        flexDirection: 'row',
-        alignItems: 'flex-start',
-        justifyContent: 'space-between',
-        gap: 8,
-    },
-
     inputContainer: {
         flex: 1,
         borderWidth: 1,
@@ -175,29 +155,10 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         backgroundColor: '#fff',
     },
-
-    smallLabel: {
-        fontSize: 12,
-        color: '#555',
-        marginBottom: 4,
-    },
-
     input: {
         fontSize: 16,
         color: '#333',
         paddingVertical: 4,
         height: 32,
     },
-
-    dashContainer: {
-        justifyContent: 'center',
-        paddingHorizontal: 8,
-    },
-
-    dash: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#333',
-    },
 });
-
