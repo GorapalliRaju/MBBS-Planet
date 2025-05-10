@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Dimensions,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { icons } from '@/constants/icons';
@@ -17,7 +18,8 @@ import { icons } from '@/constants/icons';
 const { width } = Dimensions.get('window');
 
 export default function OtpVerificationScreen() {
-  const [otp, setOtp] = useState(['', '', '', '', '']);
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [loading, setLoading] = useState(false);
   const inputs = useRef<TextInput[]>([]);
   const { phone } = useLocalSearchParams();
   const router = useRouter();
@@ -28,7 +30,7 @@ export default function OtpVerificationScreen() {
       newOtp[index] = text;
       setOtp(newOtp);
 
-      if (index < 4) {
+      if (index < 5) {
         inputs.current[index + 1]?.focus();
       }
     } else if (text === '') {
@@ -38,12 +40,40 @@ export default function OtpVerificationScreen() {
     }
   };
 
-  const handleVerify = () => {
+  const handleVerify = async () => {
     const enteredOtp = otp.join('');
-    if (enteredOtp.length === 5) {
-      router.push('/selectionScreen');
-    } else {
-      Alert.alert('Invalid OTP', 'Please enter a valid 5-digit OTP.');
+
+    if (enteredOtp.length !== 6) {
+      Alert.alert('Invalid OTP', 'Please enter a valid 6-digit OTP.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch('http://192.168.55.103:7000/api/user/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          phoneNumber: phone,
+          otp: enteredOtp,
+        }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+
+      if (data.success) {
+        router.push('/selectionScreen');
+      } else {
+        Alert.alert('Verification Failed', data.message || 'Please try again.');
+      }
+    } catch (error) {
+      console.error('Verification error:', error);
+      Alert.alert('Error', 'Something went wrong. Please check your network and try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -56,11 +86,9 @@ export default function OtpVerificationScreen() {
     >
       <View style={styles.topSection}>
         <Image source={icons.otpimage} />
-
         <Text style={styles.title}>Enter Code</Text>
-
         <Text style={styles.description}>
-        Your temporary login code was sent to <Text style={styles.phone}>+91-{phone}</Text>
+          Your temporary login code was sent to <Text style={styles.phone}>+91-{phone}</Text>
         </Text>
 
         <View style={styles.otpContainer}>
@@ -89,9 +117,13 @@ export default function OtpVerificationScreen() {
       <TouchableOpacity
         style={[styles.button, !isValidOtp && styles.buttonDisabled]}
         onPress={handleVerify}
-        disabled={!isValidOtp}
+        disabled={!isValidOtp || loading}
       >
-        <Text style={styles.buttonText}>Continue</Text>
+        {loading ? (
+          <ActivityIndicator color="#fff" />
+        ) : (
+          <Text style={styles.buttonText}>Continue</Text>
+        )}
       </TouchableOpacity>
     </KeyboardAvoidingView>
   );
@@ -131,12 +163,12 @@ const styles = StyleSheet.create({
   otpContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: 328,
+    width: '100%',
     height: 54,
     gap: 10,
   },
   otpBox: {
-    width: 54,
+    flex: 1,
     height: 54,
     borderRadius: 14,
     backgroundColor: '#F3F3F3',

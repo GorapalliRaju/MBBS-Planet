@@ -21,13 +21,34 @@ export default function LoginScreen() {
   const [isFocused, setIsFocused] = useState(false);
   const router = useRouter();
 
-  const handleContinue = () => {
-    if (mobile.length === 10) {
+  const handleContinue = async () => {
+  if (mobile.length !== 10) {
+    Alert.alert('Invalid number', 'Please enter a valid 10-digit mobile number.');
+    return;
+  }
+
+  try {
+    const response = await fetch('http://192.168.55.103:7000/api/user/verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ phoneNumber: `${mobile}` }), // assuming country code
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
       router.push({ pathname: '/otp-verification', params: { phone: mobile } });
     } else {
-      Alert.alert('Invalid number', 'Please enter a valid 10-digit mobile number.');
+      Alert.alert('Failed', data.message || 'Something went wrong');
     }
-  };
+  } catch (error) {
+    console.error(error);
+    Alert.alert('Error', 'Could not send OTP. Please try again later.');
+  }
+};
+
 
   const isValidNumber = mobile.length === 10;
 
