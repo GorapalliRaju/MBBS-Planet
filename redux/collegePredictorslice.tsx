@@ -4,7 +4,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export const fetchPredictionData = createAsyncThunk(
   'collegePredictor/fetchPredictionData',
   async () => {
-    const response = await fetch('http://192.168.55.103:7000/');
+    const response = await fetch('http://192.168.55.104:7000/');
     
     if (!response.ok) {
       throw new Error('Network response was not ok');

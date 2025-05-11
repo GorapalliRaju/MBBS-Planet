@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,9 @@ import { Ionicons } from '@expo/vector-icons';
 import { icons } from '@/constants/icons';
 import { useNavigation } from 'expo-router';
 import { useLocalSearchParams } from 'expo-router';
+import { useDispatch, UseDispatch,useSelector } from 'react-redux';
+import { RootState,AppDispatch } from '@/redux/store';
+import { fetchPremiumData } from '@/redux/premiumDataslice';
 
 const filterOptions = ['   AIQ ', '   State ', '   Year-wise ', '   CAT Wise '];
 
@@ -23,7 +26,11 @@ const ViewContentScreen = () => {
   const [selectedSort, setSelectedSort] = useState('');
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
   const navigation = useNavigation();
-
+  const dispatch=useDispatch<AppDispatch>();
+  useEffect(()=>{
+    dispatch(fetchPremiumData());
+  },[dispatch])
+  const {isLoading,data,isError}=useSelector((state:RootState)=>state.premiumData);
   const toggleFilter = (filter: string) => {
     setSelectedFilters((prev) =>
       prev.includes(filter)
@@ -147,6 +154,7 @@ const ViewContentScreen = () => {
   return (
     <View className="flex-1 bg-[#F5F5F5]">
       <View style={{ marginTop: 20 }}>
+        <Text>{data[0]?.title}</Text>
         <FlatList
           data={parsedFiles}
           keyExtractor={(item) => item.id}

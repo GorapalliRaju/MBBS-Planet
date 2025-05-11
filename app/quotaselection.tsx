@@ -63,7 +63,7 @@ const QuotaSelectionScreen = () => {
 
   const handleChange = async () => {
   try {
-    const response = await fetch('http://192.168.55.102:7000/api/college/previous', {
+    const response = await fetch('http://192.168.55.104:7000/api/college/previous', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ const QuotaSelectionScreen = () => {
     console.log('Sending Payload:', payload);
 
     try {
-      const response = await fetch('http://192.168.55.102:7000/api/college/predictColleges', {
+      const response = await fetch('http://192.168.55.104:7000/api/college/predictColleges', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

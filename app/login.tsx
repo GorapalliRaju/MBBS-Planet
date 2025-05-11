@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { icons } from '@/constants/icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width } = Dimensions.get('window');
 
@@ -28,7 +29,7 @@ export default function LoginScreen() {
   }
 
   try {
-    const response = await fetch('http://192.168.55.102:7000/api/user/verify', {
+    const response = await fetch('http://192.168.55.104:7000/api/user/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -37,8 +38,13 @@ export default function LoginScreen() {
     });
 
     const data = await response.json();
+    console.log("dataaa",data);
 
     if (data.success) {
+      if (data.user.token) {
+          await AsyncStorage.setItem('authToken', data.user.token);
+          console.log('Token stored successfully');
+        }
       router.push({ pathname: '/otp-verification', params: { phone: mobile } });
     } else {
       Alert.alert('Failed', data.message || 'Something went wrong');

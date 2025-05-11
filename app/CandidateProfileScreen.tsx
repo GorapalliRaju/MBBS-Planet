@@ -1,9 +1,33 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { icons } from '@/constants/icons';
 import { candidateData } from '@/utils/helper';
-
+import { fetchUserDetails } from '@/redux/userDetailsslice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/redux/store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const CandidateDetailsScreen = () => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { isLoading, user, isError } = useSelector((state: RootState) => state.userDetails);
+  
+  useEffect(() => {
+    const getToken = async () => {
+  try {
+    const token = await AsyncStorage.getItem('authToken');
+    if (token !== null) {
+      console.log('Token:', token);
+      // You can use this token now (e.g., for API calls)
+    } else {
+      console.log('No token found');
+    }
+  } catch (error) {
+    console.error('Error fetching token:', error);
+  }
+};
+    getToken();
+    dispatch(fetchUserDetails());
+  }, [dispatch])
+  console.log(user);
   return (
     <ScrollView style={styles.container}>
       {/* User Details Header */}
@@ -16,7 +40,7 @@ const CandidateDetailsScreen = () => {
         {/* Username */}
         <View style={styles.block}>
           <Text style={styles.label}>Username</Text>
-          <Text style={styles.value}>{candidateData.username}</Text>
+          <Text style={styles.value}>{user?.name}</Text>
         </View>
 
         {/* Enrollment Number */}
@@ -29,11 +53,11 @@ const CandidateDetailsScreen = () => {
         <View style={styles.inlineRow}>
           <View style={styles.inlineBoxSmall}>
             <Text style={styles.label}>Category</Text>
-            <Text style={styles.value}>{candidateData.category}</Text>
+            <Text style={styles.value}>{user?.category}</Text>
           </View>
           <View style={styles.inlineBoxSmall}>
             <Text style={styles.label}>State</Text>
-            <Text style={styles.value}>{candidateData.state}</Text>
+            <Text style={styles.value}>{user?.state}</Text>
           </View>
         </View>
 
@@ -45,12 +69,12 @@ const CandidateDetailsScreen = () => {
           </View>
           <View style={styles.inlineBoxSmall}>
             <Text style={styles.label}>State Rank</Text>
-            <Text style={styles.value}>{candidateData.stateRank}</Text>
+            <Text style={styles.value}>80</Text>
           </View>
         </View>
       </View>
-      <View style={{marginBottom:20,}}>
-      <View style={styles.horizontalLine} />
+      <View style={{ marginBottom: 20, }}>
+        <View style={styles.horizontalLine} />
       </View>
       {/* College Preferences Header */}
       <View style={styles.section}>
@@ -80,24 +104,24 @@ const CandidateDetailsScreen = () => {
                 <Text style={styles.value}>{pref.joiningStatus}</Text>
               </View>
             </View>
-             <View style={{gap:10}}>
-            {/* View Result PDF */}
-            <TouchableOpacity onPress={() => { /* Add link or navigation */ }}>
-              <Text style={styles.link}>View Result PDF</Text>
-            </TouchableOpacity>
+            <View style={{ gap: 10 }}>
+              {/* View Result PDF */}
+              <TouchableOpacity onPress={() => { /* Add link or navigation */ }}>
+                <Text style={styles.link}>View Result PDF</Text>
+              </TouchableOpacity>
 
-            {/* College Wise Allotment Link */}
-            <TouchableOpacity onPress={() => { /* Add link or navigation */ }}>
-              <Text style={{fontSize:14,fontWeight:'600'}}>
-                See College wise allotment - <Text style={styles.linkHighlight}>Click here</Text>
-              </Text>
-            </TouchableOpacity>
+              {/* College Wise Allotment Link */}
+              <TouchableOpacity onPress={() => { /* Add link or navigation */ }}>
+                <Text style={{ fontSize: 14, fontWeight: '600' }}>
+                  See College wise allotment - <Text style={styles.linkHighlight}>Click here</Text>
+                </Text>
+              </TouchableOpacity>
             </View>
             {/* Conditional horizontal line (skip last item) */}
-            <View style={{marginTop:20}}>
-            {index !== candidateData.collegePreferences.length - 1 && (
-              <View style={styles.horizontalLine} />
-            )}
+            <View style={{ marginTop: 20 }}>
+              {index !== candidateData.collegePreferences.length - 1 && (
+                <View style={styles.horizontalLine} />
+              )}
             </View>
           </View>
         ))}
@@ -163,7 +187,7 @@ const styles = StyleSheet.create({
     width: '100%',
     borderRadius: 8,
     padding: 10,
-    
+
   },
   collegeCardContent: {
     position: 'relative',
@@ -208,13 +232,13 @@ const styles = StyleSheet.create({
     color: '#1E7ED4',
     fontSize: 14,
     marginTop: 8,
-    fontWeight:'600',
-    textDecorationLine:'underline',
+    fontWeight: '600',
+    textDecorationLine: 'underline',
   },
   linkHighlight: {
     textDecorationLine: 'underline',
     fontWeight: '600',
-    color:'#1E7ED4',
+    color: '#1E7ED4',
   },
 });
 
