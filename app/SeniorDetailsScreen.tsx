@@ -4,8 +4,26 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { icons } from '@/constants/icons';
-
+import { useRoute,RouteProp } from '@react-navigation/native';
+type SeniorDetailsParams = {
+  senior: {
+    name: string;
+    email: string;
+    phone: string;
+    college: string;
+    state: string;
+    typeofCollege: string;
+    about: string;
+    // add any other fields returned by API
+  };
+};
+type RootStackParamList = {
+  SeniorDetailsScreen: SeniorDetailsParams;
+};
 const SeniorDetailsScreen = () => {
+  const route = useRoute<RouteProp<RootStackParamList, 'SeniorDetailsScreen'>>();
+  const {senior}=route.params;
+  console.log(senior);
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.successContainer}>
@@ -28,8 +46,8 @@ const SeniorDetailsScreen = () => {
             <View style={styles.badge}>
             <Text style={styles.badgetext}>3rd Year Student</Text>
             </View>
-            <Text style={styles.name}>Naman Kapoor</Text>
-            <Text style={styles.college}>MBBS International College</Text>
+            <Text style={styles.name}>{senior.name}</Text>
+            <Text style={styles.college}>{senior.college}</Text>
           </View>
         </View>
 
@@ -37,7 +55,7 @@ const SeniorDetailsScreen = () => {
           <Text style={styles.aboutTitle}>About Me</Text>
           <View style={{width:280,height:79}}>
           <Text style={styles.aboutText}>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua mpor incididunt ut labore et dolore
+          {senior.about}{senior.about}
           </Text>
           </View>
         </View>
@@ -55,6 +73,7 @@ const SeniorDetailsScreen = () => {
         </TouchableOpacity>
       </View>
       </View>
+      
     </ScrollView>
   );
 };

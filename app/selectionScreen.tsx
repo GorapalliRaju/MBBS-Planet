@@ -11,14 +11,44 @@ import {
   Platform,
 } from 'react-native';
 import { exams } from '@/utils/helper';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const SelectionScreen = () => {
   const [selectedExam, setSelectedExam] = useState<string | null>(null);
   const { width } = useWindowDimensions();
 
-  const handleContinue = () => {
-    console.log('Selected Exam:', selectedExam);
-    router.push('/registration');
-  };
+  
+    const handleContinue = async () => {
+      try {
+        const token = await AsyncStorage.getItem('authToken'); // retrieve auth token
+
+        if (!token) {
+          alert('User not authenticated');
+          return;
+        }
+
+        const response = await fetch('http://192.168.55.104:7000/api/user/chooseExam', {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`, // assuming Bearer token authentication
+          },
+          body: JSON.stringify({ exam: selectedExam }),
+        });
+
+        const data = await response.json();
+
+        console.log('API Response:', data);
+
+        if (data.success) {
+          router.push('/registration'); // proceed if success
+        } else {
+          alert(data.message || 'Something went wrong');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Failed to connect to server');
+      }
+    };
 
   return (
     <View

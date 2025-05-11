@@ -11,16 +11,30 @@ import {
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 import PickerField from '@/components/PickerField';
 import { images } from '@/constants/images';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 interface Plan {
   name: string;
   price: number;
   benefits: string[];
 }
+type SeniorDetailsParams = {
+  senior: {
+    name: string;
+    email: string;
+    phone: string;
+    college: string;
+    state: string;
+    typeofCollege: string;
+    about: string;
+    // add any other fields returned by API
+  };
+};
+
 type RootStackParamList = {
   PayoseniorScreen: undefined;
   CollegeListScreen: undefined;
   PaymentScreen: { selectedPlan: Plan | undefined };
-  SeniorDetailsScreen: undefined; // Add SeniorDetailsScreen
+  SeniorDetailsScreen:SeniorDetailsParams; // Add SeniorDetailsScreen
 };
 const PayToSenior = () => {
   const [form, setForm] = useState({
@@ -121,12 +135,39 @@ const PayToSenior = () => {
         </View>
         <TouchableOpacity
           style={styles.payNowButton}
-          onPress={() => {
-            navigation.navigate('SeniorDetailsScreen');
+          onPress={async () => {
+            try {
+              const queryParams = new URLSearchParams({
+                typeofCollege: 'Private',
+                state: 'Andhra Pradesh',
+                college: 'IIT Bombay',
+              });
+              const token=await AsyncStorage.getItem('authToken');
+              const response = await fetch(`http://192.168.55.104:7000/api/seniors/getSenior?${queryParams}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`, // Replace with your real token
+                },
+              });
+
+              const data = await response.json();
+
+              if (response.ok) {
+                console.log('Senior found:', data);
+                navigation.navigate('SeniorDetailsScreen', { senior: data });
+              } else {
+                alert(data.message || 'Failed to fetch senior.');
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              alert('Something went wrong. Please try again.');
+            }
           }}
         >
           <Text style={styles.payNowText}>Pay Now</Text>
         </TouchableOpacity>
+
       </View>
     </SafeAreaView>
   );
