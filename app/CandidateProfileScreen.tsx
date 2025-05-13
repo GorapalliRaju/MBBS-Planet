@@ -27,7 +27,7 @@ const CandidateDetailsScreen = () => {
     getToken();
     dispatch(fetchUserDetails());
   }, [dispatch])
-  console.log(user);
+  console.log("usreee",user);
   return (
     <ScrollView style={styles.container}>
       {/* User Details Header */}

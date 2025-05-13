@@ -16,11 +16,11 @@ import { useDispatch, UseDispatch,useSelector } from 'react-redux';
 import { RootState,AppDispatch } from '@/redux/store';
 import { fetchPremiumData } from '@/redux/premiumDataslice';
 
-const filterOptions = ['   AIQ ', '   State ', '   Year-wise ', '   CAT Wise '];
+const filterOptions = ['AIQ ', 'State ', 'Year-wise ', 'CAT Wise '];
 
 const ViewContentScreen = () => {
-  const { files } = useLocalSearchParams();
-  const parsedFiles = typeof files === 'string' ? JSON.parse(files) : [];
+  //const { files } = useLocalSearchParams();
+  //const parsedFiles = typeof files === 'string' ? JSON.parse(files) : [];
   const [isSortModalVisible, setIsSortModalVisible] = useState(false);
   const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
   const [selectedSort, setSelectedSort] = useState('');
@@ -28,8 +28,8 @@ const ViewContentScreen = () => {
   const navigation = useNavigation();
   const dispatch=useDispatch<AppDispatch>();
   useEffect(()=>{
-    dispatch(fetchPremiumData());
-  },[dispatch])
+    dispatch(fetchPremiumData({ filters: selectedFilters, sort: selectedSort }));
+  },[dispatch,selectedFilters, selectedSort])
   const {isLoading,data,isError}=useSelector((state:RootState)=>state.premiumData);
   const toggleFilter = (filter: string) => {
     setSelectedFilters((prev) =>
@@ -38,15 +38,22 @@ const ViewContentScreen = () => {
         : [...prev, filter]
     );
   };
+  
+  
+  const handleSortChange = (sortOption: string) => {
+    setSelectedSort(sortOption);
+    setIsSortModalVisible(false);
+  };
 
-  const renderItem = ({ item }: { item: typeof parsedFiles[number] }) => {
+  const renderItem = ({ item }: { item: any }) => {
+    console.log("itemee==>>",item.isPremium);
     const handlePress = () => {
-      if (item.type === 'folder') {
+      if (item.fileType === 'folder') {
         navigation.push('ViewContentScreen', { files: JSON.stringify(item.children) });
       } else if (item.locked === true) {
         Alert.alert('Locked', 'This file is locked. Please unlock to view.');
       } else {
-        navigation.push('ViewPdfScreen', { url: item.url, name: item.name });
+        navigation.push('ViewPdfScreen', { url: item.fileUrl, name: item.title });
       }
     };
 
@@ -69,14 +76,12 @@ const ViewContentScreen = () => {
           }}
           onPress={handlePress}
         >
-          {item.type === 'folder' ? (
+          {item.fileType === 'folder' ? (
             <>
               <Image source={icons.foldericon} />
               <View style={{ flex: 1, marginLeft: 12 }}>
                 <Text
                   style={{
-                    width: 107,
-                    height: 20,
                     fontFamily: 'Noto Sans',
                     fontWeight: '700',
                     fontSize: 14,
@@ -84,8 +89,9 @@ const ViewContentScreen = () => {
                     color: '#000',
                     textAlignVertical: 'center',
                   }}
+                   numberOfLines={2}
                 >
-                  {item.name}
+                  {item.description }
                 </Text>
                 {item.count && (
                   <Text style={{ fontSize: 12, color: '#6B7280', marginTop: 4 }}>
@@ -100,8 +106,6 @@ const ViewContentScreen = () => {
               <View style={{ flex: 1, marginLeft: 12 }}>
                 <Text
                   style={{
-                    width: 107,
-                    height: 20,
                     fontFamily: 'Noto Sans',
                     fontWeight: '700',
                     fontSize: 14,
@@ -110,7 +114,7 @@ const ViewContentScreen = () => {
                     textAlignVertical: 'center',
                   }}
                 >
-                  {item.name}
+                  {item.description}
                 </Text>
                 {item.count && (
                   <Text style={{ fontSize: 12, color: '#6B7280', marginTop: 4 }}>
@@ -154,15 +158,14 @@ const ViewContentScreen = () => {
   return (
     <View className="flex-1 bg-[#F5F5F5]">
       <View style={{ marginTop: 20 }}>
-        <Text>{data[0]?.title}</Text>
         <FlatList
-          data={parsedFiles}
-          keyExtractor={(item) => item.id}
+          data={data}
+          keyExtractor={(item) => item._id}
           renderItem={renderItem}
           contentContainerStyle={{ paddingBottom: 50 }}
         />
       </View>
-
+    
       {/* Bottom Bar */}
       <View className="absolute bottom-0 h-14 w-full border-t-[3px] border-gray-200 bg-white flex-row justify-around items-center">
         <TouchableOpacity
@@ -199,25 +202,11 @@ const ViewContentScreen = () => {
             </Text>
             <View style={{ height: 1, backgroundColor: '#ECECEC', marginVertical: 2 }} />
             <View style={{ marginTop: 10 }}>
-              {['Newly Added', 'Year-wise'].map((option) => {
+               {['Newly Added', 'Year-wise'].map((option) => {
                 const isSelected = selectedSort === option;
                 return (
-                  <TouchableOpacity
-                    key={option}
-                    onPress={() => {
-                      setSelectedSort(option);
-                      setIsSortModalVisible(false);
-                    }}
-                    style={{ height: 50, justifyContent: 'center' }}
-                  >
-                    <Text
-                      style={{
-                        fontSize: 16,
-                        color: isSelected ? '#000000' : '#A9A9A9',
-                        fontWeight: isSelected ? '500' : '400',
-                        fontFamily: 'Noto Sans',
-                      }}
-                    >
+                  <TouchableOpacity key={option} onPress={() => handleSortChange(option)} style={{ height: 50, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, color: isSelected ? '#000000' : '#A9A9A9', fontWeight: isSelected ? '500' : '400', fontFamily: 'Noto Sans' }}>
                       {option}
                     </Text>
                   </TouchableOpacity>

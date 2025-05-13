@@ -29,7 +29,7 @@ export default function LoginScreen() {
   }
 
   try {
-    const response = await fetch('http://192.168.55.104:7000/api/user/signup', {
+    const response = await fetch('https://mbbs-backend-3.onrender.com/api/user/signup', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -41,8 +41,8 @@ export default function LoginScreen() {
     console.log("dataaa",data);
 
     if (data.success) {
-      if (data.user.token) {
-          await AsyncStorage.setItem('authToken', data.user.token);
+      if (data.token) {
+          await AsyncStorage.setItem('authToken', data.token);
           console.log('Token stored successfully');
         }
       router.push({ pathname: '/otp-verification', params: { phone: mobile } });

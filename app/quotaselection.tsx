@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { RangeSelector } from '@/components/RangeSelector';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const formFields = [
   'Quota',
   'Category',
@@ -63,7 +64,7 @@ const QuotaSelectionScreen = () => {
 
   const handleChange = async () => {
   try {
-    const response = await fetch('http://192.168.55.104:7000/api/college/previous', {
+    const response = await fetch('https://mbbs-backend-3.onrender.com/api/college/previous', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -91,6 +92,7 @@ const QuotaSelectionScreen = () => {
   const handleCheckResult = async () => {
     const inputType = selectedSelection === 'Marks Range' ? 'marks' : 'rank';
     const value = selectedRange;
+    const token=await AsyncStorage.getItem('authToken');
 
     const payload = {
       inputType,
@@ -103,11 +105,11 @@ const QuotaSelectionScreen = () => {
     console.log('Sending Payload:', payload);
 
     try {
-      const response = await fetch('http://192.168.55.104:7000/api/college/predictColleges', {
+      const response = await fetch('https://mbbs-backend-3.onrender.com/api/college/predictColleges', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4MWRkYjNlOTg2YmE0ZjM2NTQ0YWNkZCIsImlhdCI6MTc0Njc4NzEzNCwiZXhwIjoxNzQ5MjA2MzM0fQ.xVHQ-Lj1WXgeLEAgtRaLxnecJLhQA_D5gFi88kCpCD4`, // Replace with actual token
+          Authorization: `Bearer ${token}`, // Replace with actual token
         },
         body: JSON.stringify(payload),
       });

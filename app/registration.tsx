@@ -38,7 +38,7 @@ export default function RegistrationScreen() {
       const jsonBody = JSON.stringify(form);
       console.log('JSON body:', jsonBody);
 
-      const response = await fetch('http://192.168.55.104:7000/api/user/completeProfile', {
+      const response = await fetch('https://mbbs-backend-3.onrender.com/api/user/completeProfile', {
         method: 'PATCH',
         body: jsonBody,
         headers: {

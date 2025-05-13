@@ -21,12 +21,43 @@ import { files } from '@/utils/helper';
 import { fetchPredictionData } from '@/redux/collegePredictorslice';
 import { useDispatch, useSelector } from 'react-redux'; // Corrected import
 import { RootState, AppDispatch } from '@/redux/store'; // Corrected import
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const PremiumDataScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { isLoading, data, isError } = useSelector(
     (state: RootState) => state.collegePredictor
   );
+
+  const handlePayNow = async () => {
+  try {
+    const token = await AsyncStorage.getItem('authToken'); // adjust if you use a different auth method
+
+    const response = await fetch('https://mbbs-backend-3.onrender.com/api/plans/purchase', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}` // assuming you use JWT
+      },
+      body: JSON.stringify({
+        serviceType: 'premiumContent' // change this if you're offering other plans
+      })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert(`Payment successful! Transaction ID: ${data.transactionId}`);
+      // You can navigate or update app state here
+    } else {
+      alert(`Error: ${data.error}`);
+    }
+
+  } catch (error) {
+    console.error('Error in payment:', error);
+    alert('Something went wrong. Please try again.');
+  }
+};
+
 
   useEffect(() => {
     dispatch(fetchPredictionData());
@@ -42,12 +73,7 @@ const PremiumDataScreen = () => {
 
             <Image source={images.youtube} style={styles.youtubeIcon} />
           </View>
-          <Text>{data?.message ?? 'No message'}</Text>
-          <Text>User ID: {data?.userId ?? 'N/A'}</Text>
-          <Text>Time: {data?.timestamp ?? 'N/A'}</Text>
-          <Text>Status: {data?.success ? 'Success' : 'Failed'}</Text>
-
-
+          
           <View style={styles.section}>
             <View style={{ width: 297 }}>
               <Text style={styles.mainTitle}>
@@ -96,7 +122,7 @@ const PremiumDataScreen = () => {
                 onPress={() =>
                   router.push({
                     pathname: '/ViewContentScreen',
-                    params: { files: JSON.stringify(files) },
+  
                   })
                 }
               >
@@ -112,7 +138,7 @@ const PremiumDataScreen = () => {
             <Text style={styles.price}>₹500</Text>
             <Text style={styles.tax}>All Tax included </Text>
           </View>
-          <TouchableOpacity style={styles.payNowButton}>
+          <TouchableOpacity style={styles.payNowButton} onPress={handlePayNow}>
             <Text style={styles.payNowText}>Pay Now</Text>
           </TouchableOpacity>
         </View>

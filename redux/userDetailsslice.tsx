@@ -4,7 +4,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 export const fetchUserDetails = createAsyncThunk(
   'userDetails/fetchUserDetails',
   async () => {
-    const response = await fetch('http://192.168.55.104:7000/api/user/getUser'); // update this to your actual route
+    const response = await fetch('https://mbbs-backend-3.onrender.com/api/user/getUser'); // update this to your actual route
 
     if (!response.ok) {
       throw new Error('Failed to fetch user details');

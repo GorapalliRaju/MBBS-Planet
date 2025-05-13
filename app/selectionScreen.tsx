@@ -26,7 +26,7 @@ const SelectionScreen = () => {
           return;
         }
 
-        const response = await fetch('http://192.168.55.104:7000/api/user/chooseExam', {
+        const response = await fetch('https://mbbs-backend-3.onrender.com/api/user/chooseExam', {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',

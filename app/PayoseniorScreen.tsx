@@ -49,10 +49,70 @@ const PayToSenior = () => {
   const handleChange = (key: string, value: string) => {
     setForm({ ...form, [key]: value });
   };
+   //route for getting senior details
+  /*async () => {
+            try {
+              const queryParams = new URLSearchParams({
+                typeofCollege: 'Private',
+                state: 'Andhra Pradesh',
+                college: 'IIT Bombay',
+              });
+              const token=await AsyncStorage.getItem('authToken');
+              const response = await fetch(`https://mbbs-backend-3.onrender.com/api/seniors/getSenior?${queryParams}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`, // Replace with your real token
+                },
+              });
+
+              const data = await response.json();
+
+              if (response.ok) {
+                console.log('Senior found:', data);
+                navigation.navigate('SeniorDetailsScreen', { senior: data });
+              } else {
+                alert(data.message || 'Failed to fetch senior.');
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              alert('Something went wrong. Please try again.');
+            }
+          }*/
 
   const togglePicker = (pickerId: string) => {
     setOpenPickerId(prev => (prev === pickerId ? null : pickerId));
   };
+
+  const handlePayNow = async () => {
+  try {
+    const token = await AsyncStorage.getItem('authToken'); // or use your own auth system
+
+    const response = await fetch('https://mbbs-backend-3.onrender.com/api/plans/purchase', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        serviceType: 'callSenior' // <-- key part for your need
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      alert(`✅ Payment successful! Unlocked services: ${data.unlockedServices.join(', ')}`);
+      // Optionally navigate or reload data here
+    } else {
+      alert(`❌ Error: ${data.error}`);
+    }
+  } catch (error) {
+    console.error('Payment error:', error);
+    alert('⚠️ Something went wrong. Please try again later.');
+  }
+};
+
 
   return (
     <SafeAreaView style={styles.wrapper}>
@@ -135,35 +195,7 @@ const PayToSenior = () => {
         </View>
         <TouchableOpacity
           style={styles.payNowButton}
-          onPress={async () => {
-            try {
-              const queryParams = new URLSearchParams({
-                typeofCollege: 'Private',
-                state: 'Andhra Pradesh',
-                college: 'IIT Bombay',
-              });
-              const token=await AsyncStorage.getItem('authToken');
-              const response = await fetch(`http://192.168.55.104:7000/api/seniors/getSenior?${queryParams}`, {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`, // Replace with your real token
-                },
-              });
-
-              const data = await response.json();
-
-              if (response.ok) {
-                console.log('Senior found:', data);
-                navigation.navigate('SeniorDetailsScreen', { senior: data });
-              } else {
-                alert(data.message || 'Failed to fetch senior.');
-              }
-            } catch (error) {
-              console.error('Error:', error);
-              alert('Something went wrong. Please try again.');
-            }
-          }}
+          onPress={handlePayNow}
         >
           <Text style={styles.payNowText}>Pay Now</Text>
         </TouchableOpacity>
