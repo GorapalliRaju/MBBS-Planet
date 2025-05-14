@@ -78,13 +78,10 @@ const PayToSenior = () => {
               console.error('Error:', error);
               alert('Something went wrong. Please try again.');
             }
-          }*/
-
-  const togglePicker = (pickerId: string) => {
-    setOpenPickerId(prev => (prev === pickerId ? null : pickerId));
-  };
-
-  const handlePayNow = async () => {
+          }
+            
+          //PAYMENT ROUTE FOR SENIOR DETAILS
+          async () => {
   try {
     const token = await AsyncStorage.getItem('authToken'); // or use your own auth system
 
@@ -112,6 +109,41 @@ const PayToSenior = () => {
     alert('⚠️ Something went wrong. Please try again later.');
   }
 };
+*/
+
+  const togglePicker = (pickerId: string) => {
+    setOpenPickerId(prev => (prev === pickerId ? null : pickerId));
+  };
+
+  const handlePayNow = async () => {
+            try {
+              const queryParams = new URLSearchParams({
+                typeofCollege: 'Private',
+                state: 'Tamil Nadu',
+                college: 'CMC Vellore',
+              });
+              const token=await AsyncStorage.getItem('authToken');
+              const response = await fetch(`https://mbbs-backend-3.onrender.com/api/seniors/getSenior?${queryParams}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`, // Replace with your real token
+                },
+              });
+
+              const data = await response.json();
+
+              if (response.ok) {
+                console.log('Senior found:', data);
+                navigation.navigate('SeniorDetailsScreen', { senior: data });
+              } else {
+                alert(data.message || 'Failed to fetch senior.');
+              }
+            } catch (error) {
+              console.error('Error:', error);
+              alert('Something went wrong. Please try again.');
+            }
+          }
 
 
   return (

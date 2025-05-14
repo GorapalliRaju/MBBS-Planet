@@ -11,22 +11,38 @@ import {
   SafeAreaView,
   Dimensions,
 } from 'react-native';
+import { useCallback } from 'react';
 import { router } from 'expo-router';
 import { images } from '@/constants/images';
 import { icons } from '@/constants/icons';
+import { useFocusEffect } from 'expo-router';
 import { fetchPredictionData } from '@/redux/collegePredictorslice';
 import { useDispatch,useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '@/redux/store';
+import { fetchTrialCount } from '@/redux/trackTrialsSlice';
 const CollegePredictionScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const handleTryNow = () => {
-    router.push('/quotaselection');
-  };
-  useEffect(() => {
-    dispatch(fetchPredictionData());
-  }, [dispatch]);
+  const handleTryNow = async () => {
+    const resultAction = await dispatch(fetchTrialCount());
 
-  const { isLoading, data, isError } = useSelector((state: RootState) => state.collegePredictor)
+    if (fetchTrialCount.fulfilled.match(resultAction)) {
+      const updatedTrials = resultAction.payload;
+
+      if (updatedTrials > 0) {
+        router.push('/quotaselection');
+      } else {
+        console.log('No trials left. Prompt user to pay.');
+        // You can add a modal or toast here
+      }
+    }
+  };
+  useFocusEffect(
+  useCallback(() => {
+    dispatch(fetchTrialCount());
+  }, [dispatch])
+);
+
+  const { isLoading, trialsRemaining, isError } = useSelector((state: RootState) => state.trackTrials)
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
@@ -52,17 +68,32 @@ const CollegePredictionScreen = () => {
                 Consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
               </Text>
             </View>
+            
           </View>
+         
         </ScrollView>
-
         {/* Footer Section */}
         <View style={styles.footer}>
           <View style={styles.priceContainer}>
-            <Text style={styles.tax}>You have</Text>
-            <Text style={styles.price}>3 free trials</Text>
+            {trialsRemaining === 0 ? (
+              <>
+                <Text style={styles.tax}>Free tier access expired</Text>
+                <Text style={[styles.price, { color: 'red' }]}>
+                  Pay now to proceed
+                </Text>
+              </>
+            ) : (
+              <>
+                <Text style={styles.tax}>You have</Text>
+                <Text style={styles.price}>{trialsRemaining} free trials</Text>
+              </>
+            )}
           </View>
+
           <TouchableOpacity style={styles.tryNowButton} onPress={handleTryNow}>
-            <Text style={styles.tryNowText}>Try Now</Text>
+            <Text style={styles.tryNowText}>
+              {trialsRemaining === 0 ? 'Pay Now' : 'Try Now'}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

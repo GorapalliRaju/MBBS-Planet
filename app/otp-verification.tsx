@@ -21,8 +21,9 @@ export default function OtpVerificationScreen() {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
   const inputs = useRef<TextInput[]>([]);
-  const { phone } = useLocalSearchParams();
+  const { phone,isAuth } = useLocalSearchParams();
   const router = useRouter();
+  console.log(isAuth);
 
   const handleChange = (text: string, index: number) => {
     if (/^\d$/.test(text)) {
@@ -64,11 +65,13 @@ export default function OtpVerificationScreen() {
       const data = await response.json();
       console.log(data);
 
-      if (data.success) {
-        router.push('/selectionScreen');
-      } else {
-        Alert.alert('Verification Failed', data.message || 'Please try again.');
+      if (isAuth=='true') {
+        router.push('/(tabs)');
       }
+      else{
+         router.push('/selectionScreen');
+      } 
+      
     } catch (error) {
       console.error('Verification error:', error);
       Alert.alert('Error', 'Something went wrong. Please check your network and try again.');

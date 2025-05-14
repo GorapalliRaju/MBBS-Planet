@@ -45,7 +45,7 @@ export default function LoginScreen() {
           await AsyncStorage.setItem('authToken', data.token);
           console.log('Token stored successfully');
         }
-      router.push({ pathname: '/otp-verification', params: { phone: mobile } });
+      router.push({ pathname: '/otp-verification', params: { phone: mobile,isAuth:data.isExistingUser } });
     } else {
       Alert.alert('Failed', data.message || 'Something went wrong');
     }
