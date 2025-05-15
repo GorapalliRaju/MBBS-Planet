@@ -13,8 +13,17 @@ import {
 import { useNavigation } from 'expo-router';
 import { icons } from '@/constants/icons';
 import { candidateOptions,socialLinks } from '@/utils/helper';
+import { useDispatch, UseDispatch,useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '@/redux/store';
+import { useEffect } from 'react';
+import { fetchUserDetails } from '@/redux/userDetailsslice';
 
 const CandidateProfileScreen = () => {
+  const dispatch=useDispatch<AppDispatch>();
+  useEffect(()=>{
+    dispatch(fetchUserDetails());
+  },[dispatch]);
+  const {isLoading,user,isError}=useSelector((state:RootState)=>state.userDetails)
   const { width } = useWindowDimensions();
   const containerWidth = width * 0.9;
   const avatarSize = width * 0.18;
@@ -49,7 +58,7 @@ const CandidateProfileScreen = () => {
             </TouchableOpacity>
             <View style={{ gap: 6 }}>
               <Text style={{ fontSize: scaleFont(14), fontWeight: '600', color: '#333' }}>
-                Shobhit Verma
+                {user?.name}
               </Text>
               <Text style={{ fontSize: scaleFont(12), color: '#666' }}>
                 C23 N534 D15 JUN (19309)
