@@ -34,7 +34,7 @@ const CARD_SPACING = 13;
 const OnlinePlans = ({ selectedPlan, setSelectedPlan }: OnlinePlansProps) => {
   const flatListRef = useRef<FlatList<OnlinePlan>>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-
+  console.log(selectedPlan);
   useEffect(() => {
     const interval = setInterval(() => {
       const nextIndex = (currentIndex + 1) % onlinePlans.length;

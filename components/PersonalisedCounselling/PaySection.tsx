@@ -1,38 +1,81 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
-
-// Define the type for plan details
+import AsyncStorage from '@react-native-async-storage/async-storage';
 interface PlanDetails {
   name: string;
   price: number;
   benefits: string[];
 }
 
-// Define the navigation param list for the stack
 type RootStackParamList = {
   PayoseniorScreen: undefined;
   CollegeListScreen: undefined;
   PaymentScreen: { selectedPlan: PlanDetails | undefined };
 };
 
-// Define the props type for the component
 interface PaySectionProps {
   selectedPlanDetails: PlanDetails | undefined;
   navigation: NavigationProp<RootStackParamList>;
 }
 
 const PaySection = ({ selectedPlanDetails, navigation }: PaySectionProps) => {
+   
+  const handlePayment = async () => {
+    const token=await AsyncStorage.getItem('authToken');
+    if (!token) {
+    Alert.alert('Auth Error', 'Please login to continue.');
+    return;
+  }
+    if (!selectedPlanDetails) {
+      Alert.alert('No plan selected');
+      return;
+    }
+
+    const serviceType = getServiceKey(selectedPlanDetails.name);
+
+    try {
+      const response = await fetch('https://mbbs-backend-3.onrender.com/api/plans/purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Replace with real token from AsyncStorage or context
+        },
+        body: JSON.stringify({ serviceType }),
+      });
+
+      const data = await response.json();
+      console.log(data);
+      console.log(serviceType);
+      if (!response.ok) {
+        throw new Error(data.error || 'Payment failed');
+      }
+
+      Alert.alert('Payment Successful', `Transaction ID: ${data.transactionId}`);
+      //navigation.navigate('PaymentScreen', { selectedPlan: selectedPlanDetails });
+
+    } catch (error: any) {
+      Alert.alert('Payment Error', error.message);
+    }
+  };
+
+  const getServiceKey = (planName: string) => {
+    if (planName === 'Offline Plan') return 'Offline_Plan';
+    if (planName === 'Freedom Plan') return 'Freedom_Plan';
+    if (planName.includes('Plan A')) return 'Online_Plan_A';
+    if (planName.includes('Plan B')) return 'Plan_B';
+    if (planName.includes('Plan C')) return 'Plan_C';
+    if (planName.includes('Plan D')) return 'Plan_D';
+    return planName.replace(/\s/g, '_');
+  };
+
   return (
     <View style={styles.paySection}>
       <View>
         <Text style={styles.payAmount}>₹{selectedPlanDetails?.price}</Text>
         <Text style={styles.taxText}>All Tax Included</Text>
       </View>
-      <TouchableOpacity
-        style={styles.payButton}
-        onPress={() => navigation.navigate('PaymentScreen', { selectedPlan: selectedPlanDetails })}
-      >
+      <TouchableOpacity style={styles.payButton} onPress={handlePayment}>
         <Text style={styles.payButtonText}>Pay Now</Text>
       </TouchableOpacity>
     </View>

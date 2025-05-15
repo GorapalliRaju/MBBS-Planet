@@ -5,7 +5,7 @@ import Banner from '@/components/Banner';
 import FeaturesSection from '@/components/PersonalisedCounselling/FeaturesSection';
 import PlansSection from '@/components/PersonalisedCounselling/PlansSection';
 import PaySection from '@/components/PersonalisedCounselling/PaySection';
-import { plans } from '@/utils/helper';
+import { plans,onlinePlans,miniSection } from '@/utils/helper';
 interface Plan {
   name: string;
   price: number;
@@ -19,10 +19,11 @@ interface Plan {
 };
 
 const PersonalisedCounsellingScreen = () => {
+  const allPlans: Plan[] = [...plans, ...onlinePlans, ...miniSection];
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-  const [selectedPlan, setSelectedPlan] = useState<string>('Offline');
-  const selectedPlanDetails = plans.find((plan: Plan) => plan.name === selectedPlan);
-
+  const [selectedPlan, setSelectedPlan] = useState<string>('Offline Plan');
+  const selectedPlanDetails = allPlans.find((plan: Plan) => plan.name === selectedPlan);
+  
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
