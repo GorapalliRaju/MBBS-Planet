@@ -7,6 +7,7 @@ import {
   Modal,
   Image,
   Alert,
+  Linking,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { icons } from '@/constants/icons';
@@ -48,13 +49,9 @@ const ViewContentScreen = () => {
   const renderItem = ({ item }: { item: any }) => {
     console.log("itemee==>>",item.isPremium);
     const handlePress = () => {
-      if (item.fileType === 'folder') {
-        navigation.push('ViewContentScreen', { files: JSON.stringify(item.children) });
-      } else if (item.locked === true) {
-        Alert.alert('Locked', 'This file is locked. Please unlock to view.');
-      } else {
-        navigation.push('ViewPdfScreen', { url: item.fileUrl, name: item.title });
-      }
+      Linking.openURL(item.fileUrl).catch(err => {
+      console.error('Failed to open URL:', err);
+    });
     };
 
     return (

@@ -54,7 +54,7 @@ export const RangeSelector: React.FC<RangeSelectorProps> = ({ onSelectionChange,
                 onPress={() => setDropdownVisible(prev => !prev)}
             >
                 <Text style={styles.dropdownText}>
-                    {selection || 'Select Marks/Rank'}
+                    {selection || 'Select Marks/Rank '}
                 </Text>
                 <Animated.Image
                     source={icons.CaretDown}

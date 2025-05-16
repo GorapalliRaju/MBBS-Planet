@@ -10,23 +10,6 @@ const CandidateDetailsScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { isLoading, user, isError } = useSelector((state: RootState) => state.userDetails);
   
-  useEffect(() => {
-    const getToken = async () => {
-  try {
-    const token = await AsyncStorage.getItem('authToken');
-    if (token !== null) {
-      console.log('Token:', token);
-      // You can use this token now (e.g., for API calls)
-    } else {
-      console.log('No token found');
-    }
-  } catch (error) {
-    console.error('Error fetching token:', error);
-  }
-};
-    getToken();
-    dispatch(fetchUserDetails());
-  }, [dispatch])
   console.log("usreee",user);
   return (
     <ScrollView style={styles.container}>

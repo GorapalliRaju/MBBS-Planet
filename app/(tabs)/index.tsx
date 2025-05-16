@@ -16,6 +16,11 @@ import { BannerCarousel } from '@/components/BannerCarousel'
 import ServicesSection from '../../components/services';
 import { useNavigation } from 'expo-router';
 import { useLayoutEffect } from 'react';
+import { useEffect } from 'react';
+import { fetchUserDetails } from '@/redux/userDetailsslice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, AppDispatch } from '@/redux/store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = () => {
   const { width } = useWindowDimensions();
@@ -23,6 +28,12 @@ const HomeScreen = () => {
   const contentWidth = width - horizontalPadding * 2;
   const bannerHeight = (184 / 328) * contentWidth;
   const navigation = useNavigation();
+  const dispatch = useDispatch<AppDispatch>();
+  const { isLoading, user, isError } = useSelector((state: RootState) => state.userDetails);
+  
+  useEffect(() => {
+    dispatch(fetchUserDetails());
+  }, [dispatch])
 
   useLayoutEffect(() => {
     navigation.setOptions({

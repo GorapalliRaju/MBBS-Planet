@@ -1,136 +1,141 @@
 import { images } from "@/constants/images";
 import { icons } from "@/constants/icons";
 const candidateData = {
-    username: 'Gurleen Kaur Nanda',
-    enrollmentNumber: '0200202020022020202',
-    category: 'General',
-    state: 'Delhi',
-    AIR: '1000000',
-    stateRank: '1000000',
-    collegePreferences: [
-        { type: 'AIQ R1 College', name: 'ABCD University Private Limited', joiningStatus: 'Yes' },
-        { type: 'State R1 College', name: 'ABCD University Private Limited', joiningStatus: 'Yes' },
-        { type: 'AIQ R2 College', name: 'ABCD University Private Limited', joiningStatus: 'Yes' },
-        { type: 'State R2 College', name: 'ABCD University Private Limited', joiningStatus: 'Yes' },
-    ],
+  username: 'Gurleen Kaur Nanda',
+  enrollmentNumber: '0200202020022020202',
+  category: 'General',
+  state: 'Delhi',
+  AIR: '1000000',
+  stateRank: '1000000',
+  collegePreferences: [
+    { type: 'AIQ R1 College', name: 'ABCD University Private Limited', joiningStatus: 'Yes' },
+    { type: 'State R1 College', name: 'ABCD University Private Limited', joiningStatus: 'Yes' },
+    { type: 'AIQ R2 College', name: 'ABCD University Private Limited', joiningStatus: 'Yes' },
+    { type: 'State R2 College', name: 'ABCD University Private Limited', joiningStatus: 'Yes' },
+  ],
 };
 
 const plans = [
-    {
-        name: 'Offline Plan',
-        price: 15999,
-        benefits: [
-            'Office meeting, counselling planning and discussion with Mr Shobhit Verma',
-            'In depth clarity on how to approaching counselling based on your requirements.',
-            'Office meeting, counselling planning and discussion with Mr Shobhit Verma',
-            'In depth clarity on how to approaching counselling based on your requirements.',
-            'Office meeting, counselling planning and discussion with Mr Shobhit Verma',
-            'In depth clarity on how to approaching counselling based on your requirements.',
-        ],
-    }
+  {
+    name: 'Offline Plan',
+    price: 15999,
+    benefits: [
+      'Office meeting, counselling planning and discussion with Mr Shobhit Verma',
+      'In depth clarity on how to approaching counselling based on your requirements.',
+      'Office meeting, counselling planning and discussion with Mr Shobhit Verma',
+      'In depth clarity on how to approaching counselling based on your requirements.',
+      'Office meeting, counselling planning and discussion with Mr Shobhit Verma',
+      'In depth clarity on how to approaching counselling based on your requirements.',
+    ],
+  }
 ];
 
 const onlinePlans = [
-    {
-        name: 'Plan A : Personalised Counselling Service',
-        price: 8500,
-        benefits: [
-            'Orientation session via Google Meet',
-            'Personalised College List based on individual preferences',
-            'List Modification in every round as required',
-            'Orientation session via Google Meet',
-            'Personalised College List based on individual preferences',
-            'List Modification in every round as required',
-        ],
-    },
-    {
-        name: 'Plan B : Premium Counselling - Govt./ Private MBBS',
-        price: 8500,
-        benefits: [
-            'All features of Personalised Plan',
-            'Communication via Google Meet',
-            'Extensive and elaborate support',
-            'All features of Personalised Plan',
-            'Communication via Google Meet',
-            'Extensive and elaborate support',
-        ],
-    },
-    {
-        name: 'Plan C : Karnataka / kerala + Govt. MBBS',
-        price: 8500,
-        benefits: [
-            'All features of Personalised Plan',
-            'Communication via Google Meet',
-            'Extensive and elaborate support',
-            'All features of Personalised Plan',
-            'Communication via Google Meet',
-            'Extensive and elaborate support',
-        ],
-    },
-    {
-        name: 'Plan D : Multiple Counselling',
-        price: 20000,
-        benefits: [
-            'Security money management',
-            'Strategic planning to handle multiple counselling together.',
-            'Custom pricing starting from Rs 20000/-',
-            'Security money management',
-            'Strategic planning to handle multiple counselling together.',
-            'Custom pricing starting from Rs 20000/-',
-        ],
-    }
+  {
+    name: 'Plan A : Personalised Counselling Service',
+    price: 8500,
+    benefits: [
+      'Orientation session via Google Meet',
+      'Personalised College List based on individual preferences',
+      'List Modification in every round as required',
+      'Orientation session via Google Meet',
+      'Personalised College List based on individual preferences',
+      'List Modification in every round as required',
+    ],
+  },
+  {
+    name: 'Plan B : Premium Counselling - Govt./ Private MBBS',
+    price: 8500,
+    benefits: [
+      'All features of Personalised Plan',
+      'Communication via Google Meet',
+      'Extensive and elaborate support',
+      'All features of Personalised Plan',
+      'Communication via Google Meet',
+      'Extensive and elaborate support',
+    ],
+  },
+  {
+    name: 'Plan C : Karnataka / kerala + Govt. MBBS',
+    price: 8500,
+    benefits: [
+      'All features of Personalised Plan',
+      'Communication via Google Meet',
+      'Extensive and elaborate support',
+      'All features of Personalised Plan',
+      'Communication via Google Meet',
+      'Extensive and elaborate support',
+    ],
+  },
+  {
+    name: 'Plan D : Multiple Counselling',
+    price: 20000,
+    benefits: [
+      'Security money management',
+      'Strategic planning to handle multiple counselling together.',
+      'Custom pricing starting from Rs 20000/-',
+      'Security money management',
+      'Strategic planning to handle multiple counselling together.',
+      'Custom pricing starting from Rs 20000/-',
+    ],
+  }
 ]
 
 const miniSection = [
-    {
-        name: 'Freedom Plan',
-        price: 21000,
-        benefits: [
-            'Premium / Offline Counselling for Govt / Pvt MBBS',
-            'Form Filling / Counselling Registrations / Choice filling included',
-            'Premium / Offline Counselling for Govt / Pvt MBBS',
-            'Form Filling / Counselling Registrations / Choice filling included',
-        ],
-    },
+  {
+    name: 'Freedom Plan',
+    price: 21000,
+    benefits: [
+      'Premium / Offline Counselling for Govt / Pvt MBBS',
+      'Form Filling / Counselling Registrations / Choice filling included',
+      'Premium / Offline Counselling for Govt / Pvt MBBS',
+      'Form Filling / Counselling Registrations / Choice filling included',
+    ],
+  },
 ]
 
 
 const features = [
-    {
-        title: 'Premium Data',
-        description: 'Check the most useful analysis of previous year data.',
-        image: images.analytics,
-    },
-    {
-        title: 'Candidate Profile',
-        description: 'Check the most useful analysis of previous year data.',
-        image: images.candidateProfile,
-    },
-    {
-        title: 'College Prediction',
-        description: 'The only custom data analysis tool with most useful features.',
-        image: images.collegePrediction,
-    },
-    {
-        title: 'College List',
-        description: 'Check the most useful analysis of previous year data.',
-        image: images.listinpersionalized,
-    },
-    {
-        title: 'Phone - O - Senior',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do',
-        image: images.phoneosenior,
-    },
+  {
+    title: 'Premium Data',
+    description: 'Check the most useful analysis of previous year data.',
+    image: images.analytics,
+  },
+  {
+    title: 'Candidate Profile',
+    description: 'Check the most useful analysis of previous year data.',
+    image: images.candidateProfile,
+  },
+  {
+    title: 'College Prediction',
+    description: 'The only custom data analysis tool with most useful features.',
+    image: images.collegePrediction,
+  },
+  {
+    title: 'College List',
+    description: 'Check the most useful analysis of previous year data.',
+    image: images.listinpersionalized,
+  },
+  {
+    title: 'Phone - O - Senior',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do',
+    image: images.phoneosenior,
+  },
+  {
+    title: 'Check Your List',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do',
+    image: icons.checkyourlist,
+  }
 ];
 
 const exams = [
-    'NEET - UG',
-    'NEET - PG',
-    'CUET/UG',
-    'JEE',
-    'USMLE',
-    'PLAB',
-    'IELTS / TOPL / GRE / GMAT',
+  'NEET - UG',
+  'NEET - PG',
+  'CUET/UG',
+  'JEE',
+  'USMLE',
+  'PLAB',
+  'IELTS / TOPL / GRE / GMAT',
 ];
 
 const files = [
@@ -243,7 +248,7 @@ const files = [
     locked: false,
     url: 'https://drive.google.com/uc?export=download&id=1hpg3LkwXzL0iLa84GSsLEiV_IrvQvnHc',
   }
-,  
+  ,
   {
     id: '8',
     name: 'New Data-2023',
@@ -310,10 +315,11 @@ const candidateOptions = [
 ];
 
 const socialLinks = [
-  { label: 'Whatsapp', icon: icons.whatsApp },
-  { label: 'YouTube ', icon: icons.youtube },
-  { label: 'Instagram ', icon: icons.instagram },
-  { label: 'Telegram ', icon: icons.teligram },
+  { label: 'Whatsapp', icon: icons.whatsApp, url: 'https://wa.me/message/EP7HLAFZNAEAC1' },
+  { label: 'YouTube', icon: icons.youtube, url: 'https://www.youtube.com/@SHOBHIT_VERMA' },
+  { label: 'Instagram', icon: icons.instagram, url: 'https://www.instagram.com/yourusername/' },
+  { label: 'Telegram', icon: icons.teligram, url: 'https://t.me/official_thembbsplanet' },
 ];
 
-export {candidateData,plans,onlinePlans,miniSection,features,exams,files,candidateOptions,socialLinks}
+
+export { candidateData, plans, onlinePlans, miniSection, features, exams, files, candidateOptions, socialLinks }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Platform, Dimensions, Image, TouchableOpacity, Animated } from 'react-native';
 import { icons } from '@/constants/icons';
-
+import { ScrollView } from 'react-native';
 type Props = {
   label?: string;
   value: string;
@@ -79,29 +79,35 @@ export default function PickerField({
 
         {isOpen && (
           <View style={styles.dropdown}>
-            {items.map((item, index) => (
-              <TouchableOpacity
-                key={item.value}
-                style={[
-                  styles.dropdownItem,
-                  index === items.length - 1 && styles.lastDropdownItem,
-                  item.value === value && styles.selectedItem,
-                ]}
-                onPress={() => handleSelect(item)}
-                activeOpacity={0.7}
-              >
-                <Text
+            <ScrollView
+              nestedScrollEnabled={true}
+              style={{ maxHeight: 200 }} // Set a max height so it scrolls if overflow
+            >
+              {items.map((item, index) => (
+                <TouchableOpacity
+                  key={item.value}
                   style={[
-                    styles.dropdownItemText,
-                    item.value === value && styles.selectedItemText,
+                    styles.dropdownItem,
+                    index === items.length - 1 && styles.lastDropdownItem,
+                    item.value === value && styles.selectedItem,
                   ]}
+                  onPress={() => handleSelect(item)}
+                  activeOpacity={0.7}
                 >
-                  {item.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={[
+                      styles.dropdownItemText,
+                      item.value === value && styles.selectedItemText,
+                    ]}
+                  >
+                    {item.label}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
         )}
+
       </View>
     </View>
   );

@@ -163,7 +163,7 @@ export default function RootLayout() {
           }} />
 
           <Stack.Screen name="CheckListScreen" options={{
-            title: "COLLEGE LIST",
+            title: "CHECK YOUR LIST",
             headerTitleStyle: {
               fontFamily: 'Noto Sans',  // Make sure the font is loaded
               fontWeight: '600',
@@ -173,6 +173,7 @@ export default function RootLayout() {
           }} />
 
           <Stack.Screen name="ViewPdfScreen" />
+          <Stack.Screen name="ResultsScreen" />
         </Stack>
         <CustomToast />
       </Provider>

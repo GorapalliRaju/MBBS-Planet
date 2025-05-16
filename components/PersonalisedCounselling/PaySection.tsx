@@ -2,6 +2,9 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { NavigationProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch, UseDispatch,useSelector } from 'react-redux';
+import { AppDispatch,RootState } from '@/redux/store';
+import { fetchUserDetails } from '@/redux/userDetailsslice';
 interface PlanDetails {
   name: string;
   price: number;
@@ -20,7 +23,7 @@ interface PaySectionProps {
 }
 
 const PaySection = ({ selectedPlanDetails, navigation }: PaySectionProps) => {
-   
+   const dispatch=useDispatch<AppDispatch>();
   const handlePayment = async () => {
     const token=await AsyncStorage.getItem('authToken');
     if (!token) {
@@ -53,6 +56,7 @@ const PaySection = ({ selectedPlanDetails, navigation }: PaySectionProps) => {
 
       Alert.alert('Payment Successful', `Transaction ID: ${data.transactionId}`);
       //navigation.navigate('PaymentScreen', { selectedPlan: selectedPlanDetails });
+      await dispatch(fetchUserDetails()).unwrap();
 
     } catch (error: any) {
       Alert.alert('Payment Error', error.message);

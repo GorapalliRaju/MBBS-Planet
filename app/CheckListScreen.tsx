@@ -11,12 +11,18 @@ import * as DocumentPicker from 'expo-document-picker';
 import PickerField from '@/components/PickerField';
 import { images } from '@/constants/images';
 import { icons } from '@/constants/icons';
+import { useWindowDimensions } from 'react-native';
+import WebView from 'react-native-webview';
 
 export default function CheckListScreen() {
   const [fileName, setFileName] = useState<string | null>(null);
   const [choiceList, setChoiceList] = useState('');
   const [openPickerId, setOpenPickerId] = useState('');
-
+  const [showVideo, setShowVideo] = useState(false);
+  const { width } = useWindowDimensions();
+  const horizontalPadding = 16;
+  const contentWidth = width - horizontalPadding * 2;
+  const bannerHeight = (184 / 328) * contentWidth;
   const handleFilePick = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
@@ -52,12 +58,27 @@ export default function CheckListScreen() {
         </View>
 
         {/* Video Banner */}
-        <View style={{ marginTop: 10 }}>
-          <View style={styles.thumbnailWrapper}>
-            <Image source={images.banner} style={styles.thumbnail} />
-            <View style={styles.overlay} />
-            <Image source={images.youtube} style={styles.youtubeIcon} />
-          </View>
+        <View style={{
+          position: 'relative',
+          width: contentWidth,
+          height: bannerHeight,
+          marginBottom: 16,
+          borderRadius: 4,
+          overflow: 'hidden',
+        }}>
+          {showVideo ? (
+            <WebView
+              style={{ width: '100%', height: '100%' }}
+              source={{ uri: 'https://www.youtube.com/watch?v=vtd6BLlSy6o' }}
+              allowsFullscreenVideo
+            />
+          ) : (
+            <TouchableOpacity onPress={() => setShowVideo(true)} activeOpacity={0.9}>
+              <Image source={images.banner} style={styles.thumbnail} />
+              <View style={styles.overlay} />
+              <Image source={images.youtube} style={styles.youtubeIcon} />
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Checklist Section */}
@@ -73,11 +94,11 @@ export default function CheckListScreen() {
         <View style={styles.uploadBox}>
           {fileName ? (
             <View style={{ alignItems: 'center', gap: 8 }}>
-              <View style={{flexDirection:'row',gap:4,}}>
-              <Image source={icons.uploadedicon} />
-              <Text style={styles.uploadedFileText}>
-                <Text style={{ fontWeight: '700',fontSize:16, }}>{fileName}</Text>
-              </Text>
+              <View style={{ flexDirection: 'row', gap: 4, }}>
+                <Image source={icons.uploadedicon} />
+                <Text style={styles.uploadedFileText}>
+                  <Text style={{ fontWeight: '700', fontSize: 16, }}>{fileName}</Text>
+                </Text>
               </View>
               <TouchableOpacity onPress={handleFilePick}>
                 <Text style={styles.replaceButton}>Replace with another</Text>
@@ -179,7 +200,7 @@ const styles = StyleSheet.create({
     minHeight: 100,
     borderRadius: 8,
     padding: 12,
-    height:145,
+    height: 145,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 8,

@@ -12,43 +12,43 @@ import {
 } from 'react-native';
 import { exams } from '@/utils/helper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const SelectionScreen = () => {
   const [selectedExam, setSelectedExam] = useState<string | null>(null);
   const { width } = useWindowDimensions();
 
-  
-    const handleContinue = async () => {
-      try {
-        const token = await AsyncStorage.getItem('authToken'); // retrieve auth token
+  const handleContinue = async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken'); // retrieve auth token
 
-        if (!token) {
-          alert('User not authenticated');
-          return;
-        }
-
-        const response = await fetch('https://mbbs-backend-3.onrender.com/api/user/chooseExam', {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`, // assuming Bearer token authentication
-          },
-          body: JSON.stringify({ exam: selectedExam }),
-        });
-
-        const data = await response.json();
-
-        console.log('API Response:', data);
-
-        if (data.success) {
-          router.push('/registration'); // proceed if success
-        } else {
-          alert(data.message || 'Something went wrong');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Failed to connect to server');
+      if (!token) {
+        alert('User not authenticated');
+        return;
       }
-    };
+
+      const response = await fetch('https://mbbs-backend-3.onrender.com/api/user/chooseExam', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // assuming Bearer token authentication
+        },
+        body: JSON.stringify({ exam: selectedExam }),
+      });
+
+      const data = await response.json();
+
+      console.log('API Response:', data);
+
+      if (data.success) {
+        router.push('/registration'); // proceed if success
+      } else {
+        alert(data.message || 'Something went wrong');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Failed to connect to server');
+    }
+  };
 
   return (
     <View
@@ -95,11 +95,17 @@ const SelectionScreen = () => {
         {exams.map((exam, index) => {
           const isSelected = selectedExam === exam;
           const isPreHighlighted = exam === 'NEET - UG' && !isSelected;
+          const isDisabled = exam !== 'NEET - UG';
 
           return (
             <TouchableOpacity
               key={index}
-              onPress={() => setSelectedExam(exam)}
+              onPress={() => {
+                if (!isDisabled) {
+                  setSelectedExam(exam);
+                }
+              }}
+              activeOpacity={isDisabled ? 1 : 0.7}
               style={{
                 width: '100%',
                 maxWidth: 360,
@@ -111,8 +117,8 @@ const SelectionScreen = () => {
                   ? '#F1F7FC'
                   : isPreHighlighted
                     ? '#FFFFFF'
-                    : '#F5F5F5',
-                borderWidth: 1,
+                    : '#F3F3F3',
+                borderWidth: isDisabled ? 0 : 1,
                 borderColor: isSelected
                   ? '#1976D2'
                   : isPreHighlighted
@@ -121,6 +127,7 @@ const SelectionScreen = () => {
                 flexDirection: 'row',
                 alignItems: 'center',
                 justifyContent: 'space-between',
+                opacity: isDisabled ? 0.4 : 1,
               }}
             >
               <Text
@@ -147,7 +154,6 @@ const SelectionScreen = () => {
             </TouchableOpacity>
           );
         })}
-
       </ScrollView>
 
       {/* Continue Button */}
@@ -165,7 +171,16 @@ const SelectionScreen = () => {
           alignItems: 'center',
         }}
       >
-        <Text style={{ color: '#FFFFFF', fontWeight: '600', fontSize: 16, fontFamily: 'Roboto' }}>Continue</Text>
+        <Text
+          style={{
+            color: '#FFFFFF',
+            fontWeight: '600',
+            fontSize: 16,
+            fontFamily: 'Roboto',
+          }}
+        >
+          Continue
+        </Text>
       </TouchableOpacity>
     </View>
   );

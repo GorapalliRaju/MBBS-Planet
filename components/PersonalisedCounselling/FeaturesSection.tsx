@@ -5,16 +5,16 @@ import { features } from '@/utils/helper';
 import { icons } from '@/constants/icons';
 import { images } from '@/constants/images';
 interface Plan {
-    name: string;
-    price: number;
-    benefits: string[];
-  }
-  
-   type RootStackParamList = {
-    PayoseniorScreen: undefined;
-    CollegeListScreen: undefined;
-    PaymentScreen: { selectedPlan: Plan | undefined };
-  };
+  name: string;
+  price: number;
+  benefits: string[];
+}
+
+type RootStackParamList = {
+  PayoseniorScreen: undefined;
+  CollegeListScreen: undefined;
+  PaymentScreen: { selectedPlan: Plan | undefined };
+};
 
 // Define the type for a feature
 interface Feature {
@@ -67,6 +67,10 @@ const FeaturesSection = ({ navigation }: FeaturesSectionProps) => {
                   onPress={() => {
                     if (item.title === 'Phone - O - Senior') navigation.navigate('PayoseniorScreen');
                     if (item.title === 'College List') navigation.navigate('CollegeListScreen');
+                    if (item.title === 'Premium Data') navigation.navigate('PremiumDataAnalysisScreen');
+                    if (item.title === 'Candidate Profile') navigation.navigate('CandidateProfileScreen')
+                    if (item.title === 'College Prediction') navigation.navigate('CollegePredictionScreen')
+                    if (item.title === 'Check Your List') navigation.navigate('CheckListScreen')
                   }}
                 >
                   <Text style={styles.knowMoreText}>Know More</Text>
@@ -85,7 +89,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   section: {
-    marginTop: 10,
+    marginTop: 0,
   },
   header: {
     flexDirection: 'row',

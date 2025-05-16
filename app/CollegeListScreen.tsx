@@ -4,9 +4,16 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from 'expo-router';
 import { images } from '@/constants/images';
 import { icons } from '@/constants/icons';
+import WebView from 'react-native-webview';
+import { useWindowDimensions } from 'react-native';
+import { useState } from 'react';
 export default function CollegeListScreen() {
     const navigation = useNavigation();
-
+    const { width } = useWindowDimensions();
+      const horizontalPadding = 16;
+      const contentWidth = width - horizontalPadding * 2;
+      const bannerHeight = (184 / 328) * contentWidth;
+    const [showVideo, setShowVideo] = useState(false);
     return (
         <ScrollView style={styles.container}>
             {/* S.No and Code */}
@@ -20,18 +27,18 @@ export default function CollegeListScreen() {
                 <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 10, justifyContent: 'space-between' }}>
                     <Text style={styles.label}>Sheet Link: </Text>
                     <TouchableOpacity >
-                        <View style={{flexDirection:'row',gap:4,}}>
-                        <Image  source={icons.preferencelist} style={{width:16,height:16,marginTop:8,}}/>
-                        <Text style={styles.link}>College Preference List</Text>
+                        <View style={{ flexDirection: 'row', gap: 4, }}>
+                            <Image source={icons.preferencelist} style={{ width: 16, height: 16, marginTop: 8, }} />
+                            <Text style={styles.link}>College Preference List</Text>
                         </View>
                     </TouchableOpacity>
                 </View>
 
                 {/* Info Text */}
                 <View style={{ padding: 18, borderWidth: 0.5, borderColor: '#1E7ED40D', backgroundColor: '#F3F9FF', borderRadius: 8, }}>
-                    <View style={{flexDirection:'row',gap:4,}}>
-                    <Image source={icons.privacy}style={{width:12,height:12,marginTop:6,}}/>
-                    <Text style={styles.noteText}>This sheet is best visible in Google Sheet App</Text>
+                    <View style={{ flexDirection: 'row', gap: 4, }}>
+                        <Image source={icons.privacy} style={{ width: 12, height: 12, marginTop: 6, }} />
+                        <Text style={styles.noteText}>This sheet is best visible in Google Sheet App</Text>
                     </View>
                     {/* Download Button */}
                     <Text style={styles.subLabel}>Download Here</Text>
@@ -57,10 +64,19 @@ export default function CollegeListScreen() {
                     </Text>
                 </View>
                 <View style={styles.thumbnailWrapper}>
-                    <Image source={images.banner} style={styles.thumbnail} />
-                    <View style={styles.overlay} />
-
-                    <Image source={images.youtube} style={styles.youtubeIcon} />
+                    {showVideo ? (
+                        <WebView
+                            style={styles.video}
+                            source={{ uri: 'https://www.youtube.com/watch?v=vtd6BLlSy6o' }}
+                            allowsFullscreenVideo
+                        />
+                    ) : (
+                        <TouchableOpacity onPress={() => setShowVideo(true)} activeOpacity={0.9}>
+                            <Image source={images.banner} style={styles.thumbnail} />
+                            <View style={styles.overlay} />
+                            <Image source={images.youtube} style={styles.youtubeIcon} />
+                        </TouchableOpacity>
+                    )}
                 </View>
 
             </View>
@@ -109,6 +125,10 @@ const styles = StyleSheet.create({
         backgroundColor: '#0000005C', // 0.4 is 40% opacity
         zIndex: 1, // Just below YouTube icon which has zIndex: 2
     },
+    video: {
+        width: '100%',
+        height: '100%',
+    },
     youtubeIcon: {
         position: 'absolute',
         top: '40%',
@@ -150,7 +170,7 @@ const styles = StyleSheet.create({
         color: '#1E88E5',
         fontWeight: '500',
         marginVertical: 6,
-        textDecorationLine:'underline',
+        textDecorationLine: 'underline',
     },
     noteText: {
         fontSize: 12,

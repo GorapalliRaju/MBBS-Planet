@@ -14,49 +14,62 @@ import {
 } from 'react-native';
 
 const { width } = Dimensions.get('window');
+import WebView from 'react-native-webview';
+import { useWindowDimensions } from 'react-native';
 const horizontalPadding = 32; // 16px padding on each side
 const bannerWidth = width - horizontalPadding;
+import { useState } from 'react';
 const bannerHeight = bannerWidth * 0.56; // Assuming 16:9 ratio
 import { files } from '@/utils/helper';
 import { fetchPredictionData } from '@/redux/collegePredictorslice';
 import { useDispatch, useSelector } from 'react-redux'; // Corrected import
 import { RootState, AppDispatch } from '@/redux/store'; // Corrected import
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { fetchUserDetails } from '@/redux/userDetailsslice';
 const PremiumDataScreen = () => {
+  const { width } = useWindowDimensions();
   const dispatch = useDispatch<AppDispatch>();
+  const { user } = useSelector((state: RootState) => state.userDetails)
   const { isLoading, data, isError } = useSelector(
     (state: RootState) => state.collegePredictor
   );
 
+  const horizontalPadding = 16;
+  const contentWidth = width - horizontalPadding * 2;
+  const bannerHeight = (184 / 328) * contentWidth;
+  console.log("hello", user);
+  const [showVideo, setShowVideo] = useState(false);
+
   const handlePayNow = async () => {
-  try {
-    const token = await AsyncStorage.getItem('authToken'); // adjust if you use a different auth method
+    try {
+      const token = await AsyncStorage.getItem('authToken'); // adjust if you use a different auth method
 
-    const response = await fetch('https://mbbs-backend-3.onrender.com/api/plans/purchase', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}` // assuming you use JWT
-      },
-      body: JSON.stringify({
-        serviceType: 'premiumContent' // change this if you're offering other plans
-      })
-    });
+      const response = await fetch('https://mbbs-backend-3.onrender.com/api/plans/purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` // assuming you use JWT
+        },
+        body: JSON.stringify({
+          serviceType: 'premiumContent' // change this if you're offering other plans
+        })
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (response.ok) {
-      alert(`Payment successful! Transaction ID: ${data.transactionId}`);
-      // You can navigate or update app state here
-    } else {
-      alert(`Error: ${data.error}`);
+      if (response.ok) {
+        alert(`Payment successful! Transaction ID: ${data.transactionId}`);
+        // You can navigate or update app state here
+        await dispatch(fetchUserDetails()).unwrap();
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+
+    } catch (error) {
+      console.error('Error in payment:', error);
+      alert('Something went wrong. Please try again.');
     }
-
-  } catch (error) {
-    console.error('Error in payment:', error);
-    alert('Something went wrong. Please try again.');
-  }
-};
+  };
 
 
   useEffect(() => {
@@ -67,13 +80,29 @@ const PremiumDataScreen = () => {
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
         <ScrollView contentContainerStyle={styles.scrollContent}>
-          <View style={styles.thumbnailWrapper}>
-            <Image source={images.banner} style={styles.thumbnail} />
-            <View style={styles.overlay} />
-
-            <Image source={images.youtube} style={styles.youtubeIcon} />
+          <View style={{
+            position: 'relative',
+            width: contentWidth,
+            height: bannerHeight,
+            marginBottom: 16,
+            borderRadius: 4,
+            overflow: 'hidden',
+          }}>
+            {showVideo ? (
+              <WebView
+                style={styles.video}
+                source={{ uri: 'https://www.youtube.com/watch?v=vtd6BLlSy6o' }}
+                allowsFullscreenVideo
+              />
+            ) : (
+              <TouchableOpacity onPress={() => setShowVideo(true)} activeOpacity={0.9}>
+                <Image source={images.banner} style={styles.thumbnail} />
+                <View style={styles.overlay} />
+                <Image source={images.youtube} style={styles.youtubeIcon} />
+              </TouchableOpacity>
+            )}
           </View>
-          
+
           <View style={styles.section}>
             <View style={{ width: 297 }}>
               <Text style={styles.mainTitle}>
@@ -122,7 +151,7 @@ const PremiumDataScreen = () => {
                 onPress={() =>
                   router.push({
                     pathname: '/ViewContentScreen',
-  
+
                   })
                 }
               >
@@ -133,15 +162,17 @@ const PremiumDataScreen = () => {
         </ScrollView>
 
         {/* Footer fixed at bottom */}
-        <View style={styles.footer}>
-          <View style={styles.priceContainer}>
-            <Text style={styles.price}>₹500</Text>
-            <Text style={styles.tax}>All Tax included </Text>
+        {!user?.premiumUser && (
+          <View style={styles.footer}>
+            <View style={styles.priceContainer}>
+              <Text style={styles.price}>₹500</Text>
+              <Text style={styles.tax}>All Tax included</Text>
+            </View>
+            <TouchableOpacity style={styles.payNowButton} onPress={handlePayNow}>
+              <Text style={styles.payNowText}>Pay Now</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.payNowButton} onPress={handlePayNow}>
-            <Text style={styles.payNowText}>Pay Now</Text>
-          </TouchableOpacity>
-        </View>
+        )}
       </View>
     </SafeAreaView>
   );
@@ -169,6 +200,10 @@ const styles = StyleSheet.create({
     width: 67,
     height: 41,
     zIndex: 2,
+  },
+  video: {
+    width: '100%',
+    height: '100%',
   },
   overlay: {
     position: 'absolute',

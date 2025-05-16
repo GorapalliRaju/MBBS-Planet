@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   planTitleWrapper: {
-    width: 79,
+    width: 209,
     height: 40,
   },
   planTitle: {

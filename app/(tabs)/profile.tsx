@@ -9,27 +9,29 @@ import {
   useWindowDimensions,
   SafeAreaView,
   Platform,
+  Alert,
 } from 'react-native';
 import { useNavigation } from 'expo-router';
 import { icons } from '@/constants/icons';
-import { candidateOptions,socialLinks } from '@/utils/helper';
-import { useDispatch, UseDispatch,useSelector } from 'react-redux';
+import { candidateOptions, socialLinks } from '@/utils/helper';
+import { useDispatch, UseDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '@/redux/store';
 import { useEffect } from 'react';
 import { fetchUserDetails } from '@/redux/userDetailsslice';
+import { Linking } from 'react-native';
 
 const CandidateProfileScreen = () => {
-  const dispatch=useDispatch<AppDispatch>();
-  useEffect(()=>{
+  const dispatch = useDispatch<AppDispatch>();
+  useEffect(() => {
     dispatch(fetchUserDetails());
-  },[dispatch]);
-  const {isLoading,user,isError}=useSelector((state:RootState)=>state.userDetails)
+  }, [dispatch]);
+  const { isLoading, user, isError } = useSelector((state: RootState) => state.userDetails)
   const { width } = useWindowDimensions();
   const containerWidth = width * 0.9;
   const avatarSize = width * 0.18;
   const iconSize = width * 0.045;
   const arrowSize = width * 0.04;
-  const navigation=useNavigation();
+  const navigation = useNavigation();
 
   const scaleFont = (size: number) => {
     return Math.min(Math.max(size * (width / 375), 12), 20);
@@ -44,17 +46,17 @@ const CandidateProfileScreen = () => {
         {/* Header */}
         <View style={[styles.card, { width: containerWidth, padding: width * 0.04 }]}>
           <View style={styles.row}>
-            <TouchableOpacity onPress={()=>navigation.navigate('CandidateProfileScreen')}>
-            <Image
-              source={icons.userDetails}
-              style={{
-                width: avatarSize,
-                height: avatarSize,
-                borderRadius: avatarSize / 2,
-                marginRight: 16,
-                backgroundColor:'#F4F4F4',
-              }}
-            />
+            <TouchableOpacity onPress={() => navigation.navigate('CandidateProfileScreen')}>
+              <Image
+                source={icons.userDetails}
+                style={{
+                  width: avatarSize,
+                  height: avatarSize,
+                  borderRadius: avatarSize / 2,
+                  marginRight: 16,
+                  backgroundColor: '#F4F4F4',
+                }}
+              />
             </TouchableOpacity>
             <View style={{ gap: 6 }}>
               <Text style={{ fontSize: scaleFont(14), fontWeight: '600', color: '#333' }}>
@@ -172,6 +174,22 @@ const CandidateProfileScreen = () => {
                     marginBottom: width * 0.03,
                   },
                 ]}
+                onPress={() => {
+                  if (item.label.trim().toLowerCase() === 'instagram') {
+                    return; // do nothing
+                  }
+
+                  Linking.canOpenURL(item.url)
+                    .then((supported) => {
+                      if (supported) {
+                        Linking.openURL(item.url);
+                      } else {
+                        Alert.alert('Error', 'Unable to open this link');
+                      }
+                    })
+                    .catch((err) => console.error('An error occurred', err));
+                }}
+
               >
                 <Image
                   source={item.icon}
@@ -263,7 +281,7 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    marginBottom:15,
+    marginBottom: 15,
   },
   socialBox: {
     backgroundColor: '#FAFAFA',

@@ -8,6 +8,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import { RangeSelector } from '@/components/RangeSelector';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const formFields = [
@@ -63,36 +64,43 @@ const QuotaSelectionScreen = () => {
   };
 
   const handleChange = async () => {
-  try {
-    const response = await fetch('https://mbbs-backend-3.onrender.com/api/college/previous', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        // Include token if required for auth
-        Authorization: `Bearer YOUR_AUTH_TOKEN`, 
-      },
-    });
+    try {
+      const token=AsyncStorage.getItem('authToken');
+      const response = await fetch('https://mbbs-backend-3.onrender.com/api/college/previous', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          // Include token if required for auth
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    const result = await response.json();
+      const result = await response.json();
 
-    if (response.ok) {
-      console.log('Previous result:', result.data);
-      // Optionally navigate or update UI here
-    } else {
-      console.warn('Fetch failed:', result.message);
-      // Optionally show alert or toast
+      if (response.ok) {
+        console.log('Previous result:', result.data);
+        // Optionally navigate or update UI here
+        router.push({
+          pathname: '/ResultsScreen',
+          params: {
+            colleges: JSON.stringify(result.data.colleges), // only if it's small!
+          },
+        })
+      } else {
+        console.warn('Fetch failed:', result.message);
+        // Optionally show alert or toast
+      }
+    } catch (error) {
+      console.error('Error fetching previous result:', error);
+      // Optionally show error alert
     }
-  } catch (error) {
-    console.error('Error fetching previous result:', error);
-    // Optionally show error alert
-  }
-};
+  };
 
 
   const handleCheckResult = async () => {
     const inputType = selectedSelection === 'Marks Range' ? 'marks' : 'rank';
     const value = selectedRange;
-    const token=await AsyncStorage.getItem('authToken');
+    const token = await AsyncStorage.getItem('authToken');
 
     const payload = {
       inputType,
@@ -119,6 +127,12 @@ const QuotaSelectionScreen = () => {
       if (response.ok && data.success) {
         console.log('Received Colleges:', data.data.colleges);
         // You can save the data in state or navigate
+        router.push({
+          pathname: '/ResultsScreen',
+          params: {
+            colleges: JSON.stringify(data.data.colleges), // only if it's small!
+          },
+        });
       } else {
         console.warn('API Error:', data.message);
       }

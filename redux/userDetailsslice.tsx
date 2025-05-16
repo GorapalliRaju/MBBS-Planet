@@ -27,9 +27,39 @@ interface UserDetailsState {
     category: string;
     state: string;
     city: string;
+    phoneNumber: string;
+    fathersName: string;
+    exam: string;
+    premiumUser: boolean;
+    profileUpdated: boolean;
+    services: {
+      ChoiceFilling: {
+        isActive: boolean;
+      };
+      callSenior: {
+          isActive: boolean;
+          unlockedVia: string;
+        };
+        checkYourList: {
+          isActive: boolean;
+        };
+        collegePredictor: {
+          isActive: boolean;
+          previousResults: any[]; // replace `any` with appropriate type if known
+          searchesLeft: number;
+        };
+        counsellorList: {
+          isActive: boolean;
+        };
+        premiumContent: {
+          isActive: boolean;
+          unlockedVia: string;
+        };
+    };
   } | null;
   isError: boolean;
 }
+
 
 // Initial state
 const initialState: UserDetailsState = {

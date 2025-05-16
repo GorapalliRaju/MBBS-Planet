@@ -4,19 +4,26 @@ import {
   View,
   Image,
   StyleSheet,
+  TouchableOpacity,
   NativeSyntheticEvent,
   NativeScrollEvent,
 } from 'react-native';
+import { WebView } from 'react-native-webview';
 import { images } from '@/constants/images';
 
 const bannerImage = images.banner;
 
-export const BannerCarousel = ({ width,height }: { width: number,height:number }) => {
+export const BannerCarousel = ({ width, height }: { width: number; height: number }) => {
   const scrollRef = useRef<ScrollView>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const banners = [1, 2, 3];
+  const [clickedIndex, setClickedIndex] = useState<number | null>(null); // which image is clicked
+  const [autoScroll, setAutoScroll] = useState(true); // control auto-scroll
+
+  const banners = [1, 2, 3]; // can also be array of objects with videoId
 
   useEffect(() => {
+    if (!autoScroll) return;
+
     const interval = setInterval(() => {
       const nextIndex = (currentIndex + 1) % banners.length;
       scrollRef.current?.scrollTo({ x: width * nextIndex, animated: true });
@@ -24,7 +31,7 @@ export const BannerCarousel = ({ width,height }: { width: number,height:number }
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [currentIndex]);
+  }, [currentIndex, autoScroll]);
 
   const handleMomentumScrollEnd = (
     event: NativeSyntheticEvent<NativeScrollEvent>
@@ -35,58 +42,86 @@ export const BannerCarousel = ({ width,height }: { width: number,height:number }
 
   return (
     <>
-    <View style={{ width,height }}>
-      <ScrollView
-        ref={scrollRef}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        style={{ width, height: 200 }}
-        scrollEventThrottle={16}
-        onMomentumScrollEnd={handleMomentumScrollEnd}
-      >
+      <View style={{ width, height }}>
+        <ScrollView
+          ref={scrollRef}
+          horizontal
+          pagingEnabled
+          scrollEnabled={clickedIndex === null} // disable scroll after click
+          showsHorizontalScrollIndicator={false}
+          style={{ width, height }}
+          scrollEventThrottle={16}
+          onMomentumScrollEnd={handleMomentumScrollEnd}
+        >
+          {banners.map((_, index) => (
+            <TouchableOpacity
+              key={index}
+              activeOpacity={0.9}
+              onPress={() => {
+                setClickedIndex(index);
+                setAutoScroll(false); // stop auto-scroll
+              }}
+              style={{ width, height }}
+              disabled={clickedIndex !== null} // disable further clicks
+            >
+              {clickedIndex === index ? (
+                <WebView
+                  source={{ uri: 'https://www.youtube.com/watch?v=vtd6BLlSy6o' }} // replace with dynamic ID if needed
+                  style={{ width: '100%', height: '100%' }}
+                  allowsFullscreenVideo
+                />
+              ) : (
+                <>
+                  <Image source={bannerImage} style={styles.image(width, height)} />
+                  <View style={styles.overlay} />
+                  <Image source={images.youtube} style={styles.youtubeIcon} />
+                </>
+              )}
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+
+      {/* Indicator */}
+      <View style={styles.dotContainer}>
         {banners.map((_, index) => (
-          <Image
+          <View
             key={index}
-            source={bannerImage}
-            style={styles.image(width,height)}
+            style={[
+              styles.dotBase,
+              currentIndex === index ? styles.activeDot : styles.inactiveDot,
+            ]}
           />
         ))}
-      </ScrollView>
-    </View>
-    {/* Indicator Bar */}
-    <View style={styles.dotContainer}>
-    {banners.map((_, index) => (
-      <View
-        key={index}
-        style={[
-          styles.dotBase,
-          currentIndex === index
-            ? styles.activeDot
-            : styles.inactiveDot,
-        ]}
-      />
-    ))}
-  </View>
-  </>
+      </View>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
-  image: (width: number,height:number) => ({
+  image: (width: number, height: number) => ({
     width,
-    height: height,
+    height,
     borderRadius: 8,
     resizeMode: 'cover',
   }),
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  youtubeIcon: {
+    position: 'absolute',
+    top: '40%',
+    left: '45%',
+    width: 67,
+    height: 41,
+    zIndex: 2,
+  },
   dotContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    //position: 'absolute',
-    marginTop:8,
-    bottom: 2,
-    width: '100%',
+    marginTop: 8,
   },
   dotBase: {
     marginHorizontal: 4,

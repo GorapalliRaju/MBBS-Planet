@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,12 @@ import { NavigationProp, useNavigation } from '@react-navigation/native';
 import PickerField from '@/components/PickerField';
 import { images } from '@/constants/images';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useDispatch, UseDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from '@/redux/store';
+import { RootState } from '@/redux/store';
+import WebView from 'react-native-webview';
+import { useWindowDimensions } from 'react-native';
+import { fetchUserDetails } from '@/redux/userDetailsslice';
 interface Plan {
   name: string;
   price: number;
@@ -34,7 +40,7 @@ type RootStackParamList = {
   PayoseniorScreen: undefined;
   CollegeListScreen: undefined;
   PaymentScreen: { selectedPlan: Plan | undefined };
-  SeniorDetailsScreen:SeniorDetailsParams; // Add SeniorDetailsScreen
+  SeniorDetailsScreen: SeniorDetailsParams; // Add SeniorDetailsScreen
 };
 const PayToSenior = () => {
   const [form, setForm] = useState({
@@ -42,14 +48,53 @@ const PayToSenior = () => {
     state: '',
     choosecollege: '',
   });
-
+  const { isLoading, user, isError } = useSelector((state: RootState) => state.userDetails)
+  const [hasPaid, setHasPaid] = useState<boolean>(false);
   const [openPickerId, setOpenPickerId] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
-
+  const dispatch = useDispatch<AppDispatch>();
+  const [showVideo, setShowVideo] = useState(false);
+  const { width } = useWindowDimensions();
+    const horizontalPadding = 16;
+    const contentWidth = width - horizontalPadding * 2;
+    const bannerHeight = (184 / 328) * contentWidth;
   const handleChange = (key: string, value: string) => {
     setForm({ ...form, [key]: value });
   };
-   //route for getting senior details
+  const getSeniorDetails = async () => {
+    try {
+      const queryParams = new URLSearchParams({
+        typeofCollege: form.college,
+        state: form.state,
+        college: form.choosecollege,
+      });
+      console.log(queryParams.toString());
+      const token = await AsyncStorage.getItem('authToken');
+      const response = await fetch(
+        `https://mbbs-backend-3.onrender.com/api/seniors/getSenior?${queryParams}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        navigation.navigate('SeniorDetailsScreen', { senior: data });
+      } else {
+        alert(data.message || 'Failed to fetch senior.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Something went wrong. Please try again.');
+    }
+  };
+
+  //route for getting senior details
   /*async () => {
             try {
               const queryParams = new URLSearchParams({
@@ -110,40 +155,39 @@ const PayToSenior = () => {
   }
 };
 */
-
+  console.log(user?.services?.collegePredictor?.searchesLeft)
   const togglePicker = (pickerId: string) => {
     setOpenPickerId(prev => (prev === pickerId ? null : pickerId));
   };
 
   const handlePayNow = async () => {
-            try {
-              const queryParams = new URLSearchParams({
-                typeofCollege: 'Private',
-                state: 'Tamil Nadu',
-                college: 'CMC Vellore',
-              });
-              const token=await AsyncStorage.getItem('authToken');
-              const response = await fetch(`https://mbbs-backend-3.onrender.com/api/seniors/getSenior?${queryParams}`, {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json',
-                  Authorization: `Bearer ${token}`, // Replace with your real token
-                },
-              });
+    try {
+      const token = await AsyncStorage.getItem('authToken');
 
-              const data = await response.json();
+      const response = await fetch('https://mbbs-backend-3.onrender.com/api/plans/purchase', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ serviceType: 'callSenior' }),
+      });
 
-              if (response.ok) {
-                console.log('Senior found:', data);
-                navigation.navigate('SeniorDetailsScreen', { senior: data });
-              } else {
-                alert(data.message || 'Failed to fetch senior.');
-              }
-            } catch (error) {
-              console.error('Error:', error);
-              alert('Something went wrong. Please try again.');
-            }
-          }
+      const data = await response.json();
+
+      if (response.ok) {
+        alert(`✅ Payment successful! Unlocked services: ${data.unlockedServices.join(', ')}`);
+        setHasPaid(true); // update state to re-render footer
+        await dispatch(fetchUserDetails()).unwrap();
+      } else {
+        alert(`❌ Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      alert('⚠️ Something went wrong. Please try again later.');
+    }
+  };
+
 
 
   return (
@@ -162,10 +206,27 @@ const PayToSenior = () => {
           </View>
 
           {/* Video */}
-          <View style={styles.thumbnailWrapper}>
-            <Image source={images.banner} style={styles.thumbnail} />
-            <View style={styles.overlay} />
-            <Image source={images.youtube} style={styles.youtubeIcon} />
+          <View style={{
+            position: 'relative',
+            width: contentWidth,
+            height: bannerHeight,
+            marginBottom: 16,
+            borderRadius: 4,
+            overflow: 'hidden',
+          }}>
+            {showVideo ? (
+              <WebView
+                style={styles.video}
+                source={{ uri: 'https://www.youtube.com/watch?v=vtd6BLlSy6o' }}
+                allowsFullscreenVideo
+              />
+            ) : (
+              <TouchableOpacity onPress={() => setShowVideo(true)} activeOpacity={0.9}>
+                <Image source={images.banner} style={styles.thumbnail} />
+                <View style={styles.overlay} />
+                <Image source={images.youtube} style={styles.youtubeIcon} />
+              </TouchableOpacity>
+            )}
           </View>
 
           <View>
@@ -175,8 +236,8 @@ const PayToSenior = () => {
               onValueChange={(value) => handleChange('college', value)}
               placeholder="Govt / Private"
               items={[
-                { label: 'Government', value: 'government' },
-                { label: 'Private', value: 'private' },
+                { label: 'Government', value: 'Government' },
+                { label: 'Private', value: 'Private' },
               ]}
               pickerId="college"
               isOpen={openPickerId === 'college'}
@@ -189,9 +250,9 @@ const PayToSenior = () => {
               onValueChange={(value) => handleChange('state', value)}
               placeholder="Select State"
               items={[
-                { label: 'Andhra Pradesh', value: 'andhra_pradesh' },
-                { label: 'Telangana', value: 'telangana' },
-                { label: 'Karnataka', value: 'karnataka' },
+                { label: 'Delhi', value: 'Delhi' },
+                { label: 'Tamil Nadu', value: 'Tamil Nadu' },
+                { label: 'Maharashtra', value: 'karnataka' },
                 { label: 'Tamil Nadu', value: 'tamil_nadu' },
                 { label: 'Maharashtra', value: 'maharashtra' },
               ]}
@@ -206,10 +267,11 @@ const PayToSenior = () => {
               onValueChange={(value) => handleChange('choosecollege', value)}
               placeholder="Select College"
               items={[
-                { label: 'IIT Bombay', value: 'iit_bombay' },
-                { label: 'IIT Delhi', value: 'iit_delhi' },
-                { label: 'NIT Warangal', value: 'nit_warangal' },
-                { label: 'BITS Pilani', value: 'bits_pilani' },
+                { label: 'AIIMS Delhi', value: 'AIIMS Delhi' },
+                { label: 'CMC Vellore', value: 'CMC Vellore' },
+                { label: 'Grant Medical College', value: 'Grant Medical College' },
+                { label: 'Maulana Azad Medical College', value: 'Maulana Azad Medical College' },
+                { label: 'Kolkata Medical College', value: 'Kolkata Medical College' },
               ]}
               pickerId="choosecollege"
               isOpen={openPickerId === 'choosecollege'}
@@ -220,19 +282,24 @@ const PayToSenior = () => {
       </View>
 
       {/* Footer */}
-      <View style={styles.footer}>
-        <View style={styles.priceContainer}>
-          <Text style={styles.price}>₹500</Text>
-          <Text style={styles.tax}>All Tax included </Text>
+      {!user?.services?.callSenior?.isActive ? (
+        <View style={styles.footer}>
+          <View style={styles.priceContainer}>
+            <Text style={styles.price}>₹500</Text>
+            <Text style={styles.tax}>All Tax included </Text>
+          </View>
+          <TouchableOpacity style={styles.payNowButton} onPress={handlePayNow}>
+            <Text style={styles.payNowText}>Pay Now</Text>
+          </TouchableOpacity>
         </View>
-        <TouchableOpacity
-          style={styles.payNowButton}
-          onPress={handlePayNow}
-        >
-          <Text style={styles.payNowText}>Pay Now</Text>
-        </TouchableOpacity>
+      ) : (
+        <View style={styles.footer}>
+          <TouchableOpacity style={styles.payNowButton} onPress={getSeniorDetails}>
+            <Text style={styles.payNowText}>Get Senior Details</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
-      </View>
     </SafeAreaView>
   );
 };
@@ -266,6 +333,10 @@ const styles = StyleSheet.create({
     width: 67,
     height: 41,
     zIndex: 2,
+  },
+  video: {
+    width: '100%',
+    height: '100%',
   },
   overlay: {
     position: 'absolute',

@@ -45,4 +45,5 @@ export const icons={
     privacy: require('../assets/icons/privacy.png'),
     uploadedicon: require('../assets/icons/uploadedicon.png'),
     preferencelist: require('../assets/icons/preferencelist.png'),
+    checkyourlist: require('../assets/icons/checkyourlist.png'),
 }
